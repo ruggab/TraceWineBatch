@@ -1,0 +1,161 @@
+<wsdl:definitions
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:s0="urn:WS_TRC_AUTHENTICATION"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="urn:WS_TRC_AUTHENTICATION">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="unqualified"
+			targetNamespace="urn:WS_TRC_AUTHENTICATION">
+			<xsd:complexType name="tLOGIN">
+				<xsd:sequence>
+					<xsd:element name="IdSociete" type="xsd:int" />
+					<xsd:element name="User" type="xsd:string" />
+					<xsd:element name="Pass" type="xsd:string" />
+					<xsd:element name="Host" type="xsd:string" />
+					<xsd:element name="Application" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="LOGIN" type="s0:tLOGIN" />
+			<xsd:complexType name="tLOGINResponse">
+				<xsd:sequence>
+					<xsd:element name="LOGINResult" type="xsd:int" />
+					<xsd:element name="LOGINMessage" type="xsd:string" />
+					<xsd:element name="LOGINConnexionId" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="LOGINResponse"
+				type="s0:tLOGINResponse" />
+			<xsd:complexType name="tLOGOUT">
+				<xsd:sequence>
+					<xsd:element name="IdConnexion" type="xsd:int" />
+					<xsd:element name="Application" type="xsd:string" />
+					<xsd:element name="Token" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="LOGOUT" type="s0:tLOGOUT" />
+			<xsd:complexType name="tLOGOUTResponse">
+				<xsd:sequence>
+					<xsd:element name="LOGOUTResult" type="xsd:int" />
+					<xsd:element name="LOGOUTMessage" type="xsd:string" />
+					<xsd:element name="LOGOUTConnexionId" type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="LOGOUTResponse"
+				type="s0:tLOGOUTResponse" />
+			<xsd:complexType name="tCHECKLOGIN">
+				<xsd:sequence>
+					<xsd:element name="IdConnexion" type="xsd:int" />
+					<xsd:element name="Application" type="xsd:string" />
+					<xsd:element name="Token" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="CHECKLOGIN" type="s0:tCHECKLOGIN" />
+			<xsd:complexType name="tCHECKLOGINResponse">
+				<xsd:sequence>
+					<xsd:element name="CHECKLOGINResult" type="xsd:int" />
+					<xsd:element name="CHECKLOGINMessage" type="xsd:string" />
+					<xsd:element name="CHECKLOGINConnexionId"
+						type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="CHECKLOGINResponse"
+				type="s0:tCHECKLOGINResponse" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="WS_TRC_AUTHENTICATION_LOGIN_MessageIn">
+		<wsdl:part name="parametersLOGINin" element="s0:LOGIN" />
+	</wsdl:message>
+	<wsdl:message
+		name="WS_TRC_AUTHENTICATION_LOGIN_MessageOut">
+		<wsdl:part name="parametersLOGINout"
+			element="s0:LOGINResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="WS_TRC_AUTHENTICATION_LOGOUT_MessageIn">
+		<wsdl:part name="parametersLOGOUTin" element="s0:LOGOUT" />
+	</wsdl:message>
+	<wsdl:message
+		name="WS_TRC_AUTHENTICATION_LOGOUT_MessageOut">
+		<wsdl:part name="parametersLOGOUTout"
+			element="s0:LOGOUTResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="WS_TRC_AUTHENTICATION_CHECKLOGIN_MessageIn">
+		<wsdl:part name="parametersCHECKLOGINin"
+			element="s0:CHECKLOGIN" />
+	</wsdl:message>
+	<wsdl:message
+		name="WS_TRC_AUTHENTICATION_CHECKLOGIN_MessageOut">
+		<wsdl:part name="parametersCHECKLOGINout"
+			element="s0:CHECKLOGINResponse" />
+	</wsdl:message>
+	<wsdl:portType name="WS_TRC_AUTHENTICATIONSOAPPortType">
+		<wsdl:operation name="LOGIN">
+			<wsdl:input
+				message="s0:WS_TRC_AUTHENTICATION_LOGIN_MessageIn" />
+			<wsdl:output
+				message="s0:WS_TRC_AUTHENTICATION_LOGIN_MessageOut" />
+		</wsdl:operation>
+		<wsdl:operation name="LOGOUT">
+			<wsdl:input
+				message="s0:WS_TRC_AUTHENTICATION_LOGOUT_MessageIn" />
+			<wsdl:output
+				message="s0:WS_TRC_AUTHENTICATION_LOGOUT_MessageOut" />
+		</wsdl:operation>
+		<wsdl:operation name="CHECKLOGIN">
+			<wsdl:input
+				message="s0:WS_TRC_AUTHENTICATION_CHECKLOGIN_MessageIn" />
+			<wsdl:output
+				message="s0:WS_TRC_AUTHENTICATION_CHECKLOGIN_MessageOut" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WS_TRC_AUTHENTICATIONSOAPBinding"
+		type="s0:WS_TRC_AUTHENTICATIONSOAPPortType">
+		<soap:binding
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="LOGIN">
+			<soap:operation soapAction="LOGIN" style="document" />
+			<wsdl:input>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="LOGOUT">
+			<soap:operation soapAction="LOGOUT" style="document" />
+			<wsdl:input>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="CHECKLOGIN">
+			<soap:operation soapAction="CHECKLOGIN"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_AUTHENTICATION" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WS_TRC_AUTHENTICATION">
+		<wsdl:port name="WS_TRC_AUTHENTICATIONSOAPPort"
+			binding="s0:WS_TRC_AUTHENTICATIONSOAPBinding">
+			<soap:address
+				location="http://back.traceawine.com/webservices3/Authentication/WS_Authentication.php" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

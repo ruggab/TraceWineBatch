@@ -1,0 +1,77 @@
+<wsdl:definitions
+	xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:s0="urn:WS_TRC_SYNCHRONISATION"
+	xmlns="http://schemas.xmlsoap.org/wsdl/"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+	targetNamespace="urn:WS_TRC_SYNCHRONISATION">
+	<wsdl:types>
+		<xsd:schema elementFormDefault="unqualified"
+			targetNamespace="urn:WS_TRC_SYNCHRONISATION">
+			<xsd:complexType name="tSYNCHRONISATION">
+				<xsd:sequence>
+					<xsd:element name="IdConnexion" type="xsd:int" />
+					<xsd:element name="Application" type="xsd:string" />
+					<xsd:element name="Token" type="xsd:string" />
+					<xsd:element name="Subject" type="xsd:string" />
+					<xsd:element name="Function" type="xsd:string" />
+					<xsd:element name="Params" type="xsd:string" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="SYNCHRONISATION"
+				type="s0:tSYNCHRONISATION" />
+			<xsd:complexType name="tSYNCHRONISATIONResponse">
+				<xsd:sequence>
+					<xsd:element name="SYNCHRONISATIONResult"
+						type="xsd:int" />
+					<xsd:element name="SYNCHRONISATIONMessage"
+						type="xsd:string" />
+					<xsd:element name="SYNCHRONISATIONMessageId"
+						type="xsd:int" />
+				</xsd:sequence>
+			</xsd:complexType>
+			<xsd:element name="SYNCHRONISATIONResponse"
+				type="s0:tSYNCHRONISATIONResponse" />
+		</xsd:schema>
+	</wsdl:types>
+	<wsdl:message name="WS_TRC_SYNCHRONISATION_MessageIn">
+		<wsdl:part name="parametersSYNCHRONISATIONin"
+			element="s0:SYNCHRONISATION" />
+	</wsdl:message>
+	<wsdl:message name="WS_TRC_SYNCHRONISATION_MessageOut">
+		<wsdl:part name="parametersSYNCHRONISATIONout"
+			element="s0:SYNCHRONISATIONResponse" />
+	</wsdl:message>
+	<wsdl:portType name="WS_TRC_SYNCHRONISATIONSOAPPortType">
+		<wsdl:operation name="SYNCHRONISATION">
+			<wsdl:input message="s0:WS_TRC_SYNCHRONISATION_MessageIn" />
+			<wsdl:output
+				message="s0:WS_TRC_SYNCHRONISATION_MessageOut" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="WS_TRC_SYNCHRONISATIONSOAPBinding"
+		type="s0:WS_TRC_SYNCHRONISATIONSOAPPortType">
+		<soap:binding
+			transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation name="SYNCHRONISATION">
+			<soap:operation soapAction="SYNCHRONISATION"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_SYNCHRONISATION" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"
+					namespace="urn:WS_TRC_SYNCHRONISATION" />
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="WS_TRC_SYNCHRONISATION">
+		<wsdl:port name="WS_TRC_SYNCHRONISATIONSOAPPort"
+			binding="s0:WS_TRC_SYNCHRONISATIONSOAPBinding">
+			<soap:address
+				location="http://back.demo.com/webservices3/Synchronisation/WS_Synchronisation.php" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
