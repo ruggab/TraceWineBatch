@@ -12,7 +12,7 @@ public class ClientSync {
 	
 	public static void main(String[] args) {
 		 SyncClient client = new SyncClient();
-		 TSYNCHRONISATIONResponse resp = client.getSyncResp("5001F70E197",48309, "tunnel","Stock","startsynchro", "3|Start");
+		 TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309, "Tunnel","Stock","startsynchro", "3|Start");
 		 String msg = resp.getSYNCHRONISATIONMessage();
 		 int id = resp.getSYNCHRONISATIONMessageId();
 		 int res = resp.getSYNCHRONISATIONResult();

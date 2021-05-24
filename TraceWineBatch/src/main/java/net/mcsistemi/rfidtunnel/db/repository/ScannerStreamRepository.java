@@ -72,4 +72,8 @@ public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Lo
 	//From 1 to 30/31 mese precedente
 	@Query(value="SELECT count(*) from scanner_stream where time_stamp >= date_trunc('month', now()) - interval '1 month' and time_stamp < date_trunc('month', now())  and esito = 'KO'", nativeQuery = true)
 	Integer getTotalPackageKoLastMonth();
+	
+	
+	@Query(value = "SELECT nextval('SynchroSerial') ", nativeQuery = true)
+	Integer getSeqNextVal();
 }

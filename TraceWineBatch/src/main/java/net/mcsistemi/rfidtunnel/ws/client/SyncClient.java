@@ -21,8 +21,39 @@ public class SyncClient extends WebServiceGatewaySupport {
 		marshaller.setContextPath("net.mcsistemi.rfidtunnel.ws.client.gen");
 		return marshaller;
 	}
+	
+	public TSYNCHRONISATIONResponse synchronization(String token, int idConn,  String sbj, String app, String func, String param) {
+		
+		TSYNCHRONISATION request = new TSYNCHRONISATION();
+		request.setApplication(app);
+		request.setFunction(func);
+		request.setIdConnexion(idConn);
+		request.setToken(token);
+		request.setSubject(sbj);
+		request.setParams(param);
+		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
+		TSYNCHRONISATIONResponse resp = (TSYNCHRONISATIONResponse) response.getValue();
+		return resp;
+	}
+	
 
-	public TSYNCHRONISATIONResponse getSyncResp(String token, int idCon, String sbj, String app, String func, String param) {
+	public String startSynchro(String token, int idConn,  String sbj, String app, String func, String param) {
+		String msgIdProd = "";
+		TSYNCHRONISATION request = new TSYNCHRONISATION();
+		request.setApplication(app);
+		request.setFunction(func);
+		request.setIdConnexion(idConn);
+		request.setToken(token);
+		request.setSubject(sbj);
+		request.setParams(param);
+		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
+		TSYNCHRONISATIONResponse resp = (TSYNCHRONISATIONResponse) response.getValue();
+		msgIdProd = resp.getSYNCHRONISATIONMessage() ;
+		return msgIdProd;
+	}
+	
+	
+	public TSYNCHRONISATIONResponse sendTu(String token, int idCon, String sbj, String app, String func, String param) {
 		TSYNCHRONISATION request = new TSYNCHRONISATION();
 		request.setApplication(app);
 		request.setFunction(func);
@@ -34,5 +65,21 @@ public class SyncClient extends WebServiceGatewaySupport {
 		TSYNCHRONISATIONResponse resp = (TSYNCHRONISATIONResponse) response.getValue();
 		return resp;
 	}
+	
+	public String stopSynchro(String token, int idConn,  String sbj, String app, String func, String param) {
+		String msgIdProd = "";
+		TSYNCHRONISATION request = new TSYNCHRONISATION();
+		request.setApplication(app);
+		request.setFunction(func);
+		request.setIdConnexion(idConn);
+		request.setToken(token);
+		request.setSubject(sbj);
+		request.setParams(param);
+		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
+		TSYNCHRONISATIONResponse resp = (TSYNCHRONISATIONResponse) response.getValue();
+		msgIdProd = resp.getSYNCHRONISATIONMessage() ;
+		return msgIdProd;
+	}
+	
 
 }
