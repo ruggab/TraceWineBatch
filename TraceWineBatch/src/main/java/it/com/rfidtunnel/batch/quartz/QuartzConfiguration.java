@@ -56,7 +56,7 @@ public class QuartzConfiguration {
 //		ctFactory.setStartDelay(3000);
 //		ctFactory.setName("cron_trigger");
 //		ctFactory.setGroup("cron_group");
-		ctFactory.setCronExpression("*/10 * * * * ? *");
+		ctFactory.setCronExpression("*/10 * * * * ? *"); 
 		return ctFactory;
 	}
 

@@ -30,11 +30,11 @@ public class AuthClient extends WebServiceGatewaySupport {
 
 	public TLOGINResponse getLoginResp(String usr, String psw, String app, String host, int idSoc) {
 		TLOGIN request = new TLOGIN();
-		request.setApplication(app);
+		request.setApplication(fnScript(app));
 		request.setHost(host);
 		request.setIdSociete(idSoc);
-		request.setPass(psw);
-		request.setUser(usr);
+		request.setPass(fnScript(psw));
+		request.setUser(fnScript(usr));
 
 		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
 		TLOGINResponse resp = (TLOGINResponse)response.getValue();
@@ -67,7 +67,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 		String empty = "";
 		int length = strTexte.length();
 		int intDecalage = random.nextInt(20) + 1;
-		empty = Integer.toHexString(intDecalage);
+		empty = String.format("%02X",intDecalage);
 		int num = 0;
 		for (length = 0; length < strTexte.length(); length++)
 		{
@@ -77,7 +77,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 			{
 				num = 0;
 				intDecalage = random.nextInt(20) + 1;
-				empty += Integer.toHexString(intDecalage);
+				empty += String.format("%02X",intDecalage);
 			}
 			else
 			{
