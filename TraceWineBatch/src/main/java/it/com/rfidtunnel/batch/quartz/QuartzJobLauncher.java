@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.batch.quartz;
+package it.com.rfidtunnel.batch.quartz;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;

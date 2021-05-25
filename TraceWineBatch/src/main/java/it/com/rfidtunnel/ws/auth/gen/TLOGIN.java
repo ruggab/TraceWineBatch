@@ -6,7 +6,7 @@
 //
 
 
-package net.mcsistemi.rfidtunnel.ws.auth.gen;
+package it.com.rfidtunnel.ws.auth.gen;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.db.entity;
+package it.com.rfidtunnel.db.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

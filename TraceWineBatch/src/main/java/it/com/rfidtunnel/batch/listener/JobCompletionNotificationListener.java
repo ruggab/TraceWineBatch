@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.batch.listener;
+package it.com.rfidtunnel.batch.listener;
 
 import java.io.BufferedWriter;
 import java.nio.file.Files;

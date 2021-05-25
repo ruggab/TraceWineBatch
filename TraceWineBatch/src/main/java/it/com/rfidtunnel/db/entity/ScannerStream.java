@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.db.entity;
+package it.com.rfidtunnel.db.entity;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,10 +40,11 @@ public class ScannerStream {
 	private String quantita;
 	
 	
-	private String lastEvent;
-	
 	@Transient
 	private String dataForm;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date timeInvio;
 	
 
 	
@@ -110,20 +111,20 @@ public class ScannerStream {
 		this.quantita = quantita;
 	}
 
-	public String getLastEvent() {
-		return lastEvent;
-	}
-
-	public void setLastEvent(String lastEvent) {
-		this.lastEvent = lastEvent;
-	}
-
 	public String getDettaglio() {
 		return dettaglio;
 	}
 
 	public void setDettaglio(String dettaglio) {
 		this.dettaglio = dettaglio;
+	}
+
+	public Date getTimeInvio() {
+		return timeInvio;
+	}
+
+	public void setTimeInvio(Date timeInvio) {
+		this.timeInvio = timeInvio;
 	}
 
 	

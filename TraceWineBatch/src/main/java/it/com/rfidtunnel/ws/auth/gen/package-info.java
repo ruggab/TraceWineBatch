@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "urn:WS_TRC_AUTHENTICATION")
-package net.mcsistemi.rfidtunnel.ws.auth.gen;
+package it.com.rfidtunnel.ws.auth.gen;

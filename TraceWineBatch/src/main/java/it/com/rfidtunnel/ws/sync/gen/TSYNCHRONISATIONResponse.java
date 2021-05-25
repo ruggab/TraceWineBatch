@@ -6,7 +6,7 @@
 //
 
 
-package net.mcsistemi.rfidtunnel.ws.sync.gen;
+package it.com.rfidtunnel.ws.sync.gen;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

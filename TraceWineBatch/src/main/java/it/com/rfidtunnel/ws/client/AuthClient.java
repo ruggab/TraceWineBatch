@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.ws.client;
+package it.com.rfidtunnel.ws.client;
 
 import java.util.Random;
 
@@ -7,12 +7,12 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TCHECKLOGIN;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TCHECKLOGINResponse;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TLOGIN;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TLOGINResponse;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TLOGOUT;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TLOGOUTResponse;
+import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGIN;
+import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGINResponse;
+import it.com.rfidtunnel.ws.auth.gen.TLOGIN;
+import it.com.rfidtunnel.ws.auth.gen.TLOGINResponse;
+import it.com.rfidtunnel.ws.auth.gen.TLOGOUT;
+import it.com.rfidtunnel.ws.auth.gen.TLOGOUTResponse;
 
 public class AuthClient extends WebServiceGatewaySupport {
 
@@ -24,13 +24,13 @@ public class AuthClient extends WebServiceGatewaySupport {
 
 	private Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-		marshaller.setContextPath("net.mcsistemi.rfidtunnel.ws.auth.gen");
+		marshaller.setContextPath("it.com.rfidtunnel.ws.auth.gen");
 		return marshaller;
 	}
 
 	public TLOGINResponse getLoginResp(String usr, String psw, String app, String host, int idSoc) {
 		TLOGIN request = new TLOGIN();
-		request.setApplication(fnScript(app));
+		request.setApplication(app);
 		request.setHost(host);
 		request.setIdSociete(idSoc);
 		request.setPass(psw);
@@ -71,7 +71,8 @@ public class AuthClient extends WebServiceGatewaySupport {
 		int num = 0;
 		for (length = 0; length < strTexte.length(); length++)
 		{
-			empty += Integer.toHexString(cryptBye((byte)strTexte.charAt(length), intDecalage, num));
+			byte bb = cryptBye((byte)strTexte.charAt(length), intDecalage, num);
+			empty += String.format("%02X", bb);
 			if (num == 5)
 			{
 				num = 0;

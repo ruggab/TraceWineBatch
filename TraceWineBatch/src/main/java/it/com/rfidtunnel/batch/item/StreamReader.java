@@ -1,7 +1,10 @@
-package net.mcsistemi.rfidtunnel.batch.item;
+package it.com.rfidtunnel.batch.item;
 
+import java.sql.Timestamp;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,14 +14,15 @@ import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.mcsistemi.rfidtunnel.db.entity.ScannerStream;
-import net.mcsistemi.rfidtunnel.db.repository.ReaderStreamAttesoRepository;
-import net.mcsistemi.rfidtunnel.db.repository.ReaderStreamRepository;
-import net.mcsistemi.rfidtunnel.db.repository.ScannerStreamRepository;
-import net.mcsistemi.rfidtunnel.ws.auth.gen.TLOGINResponse;
-import net.mcsistemi.rfidtunnel.ws.client.AuthClient;
-import net.mcsistemi.rfidtunnel.ws.client.SyncClient;
-import net.mcsistemi.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
+import it.com.rfidtunnel.db.entity.ScannerStream;
+import it.com.rfidtunnel.db.repository.ReaderStreamAttesoRepository;
+import it.com.rfidtunnel.db.repository.ReaderStreamRepository;
+import it.com.rfidtunnel.db.repository.ScannerStreamRepository;
+import it.com.rfidtunnel.db.repository.ReaderStreamRepository.ReaderStreamOnly;
+import it.com.rfidtunnel.ws.auth.gen.TLOGINResponse;
+import it.com.rfidtunnel.ws.client.AuthClient;
+import it.com.rfidtunnel.ws.client.SyncClient;
+import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
 
 /**
  * The Class StreamReader.
@@ -38,48 +42,63 @@ public class StreamReader implements ItemReader<Object> {
 	private ReaderStreamAttesoRepository readerStreamAttesoRepository;
 
 	@Override
+	@Transactional
 	public Object read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
-		
-		List<ScannerStream> listScanner = scannerStreamRepository.findAll();
-		int intNBLigne =  listScanner.size();
-		for (ScannerStream scannerStream : listScanner) {
-			log.info(scannerStream.getPackageData());
 
-		}
-		//Login WS
-		AuthClient authClient = new AuthClient();
-		TLOGINResponse authResp = authClient.getLoginResp("ws-synchro3_7@traceacode.com", "traceacode", "Stock", "pcdev", 999934);
-		if (authResp.getLOGINResult() == 101) {
-			throw new Exception("Incorrect Call Parameter");
-		}
-		if (authResp.getLOGINResult() == 99) {
-			throw new Exception("Connection Error");
-		}
-		String token = authResp.getLOGINMessage();
-		int idConn = authResp.getLOGINConnexionId();
-		Integer idMessage = scannerStreamRepository.getSeqNextVal();
-		String param = idMessage+"|start";
-		SyncClient syncClient = new SyncClient();
-		
-		//START SYNCHRO
-		// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309, "tunnel","Stock","startsynchro", "3|Start");
-		TSYNCHRONISATIONResponse synchResp = syncClient.synchronization(token, idConn, "Tunnel", "Stock", "startsynchro", param);
-		if (synchResp.getSYNCHRONISATIONMessageId() == 99) {
-			throw new Exception(synchResp.getSYNCHRONISATIONMessage());
-		}
-		String idProduction = synchResp.getSYNCHRONISATIONMessage();
-		//Costruisco param da passare all sycro sendtu
-		StringBuffer sb = new StringBuffer(idMessage+"|"+idProduction+"|"+intNBLigne);
-		sb.append("");
-		
-		//SEND TU  SYNCHRO
-		syncClient.synchronization(token, idConn, "Tunnel", "Stock", "sendtu", param);
 		
 		
-		//STOP SYNCHRO
+
+			// Login WS
+			AuthClient authClient = new AuthClient();
+			TLOGINResponse authResp = authClient.getLoginResp("ws-synchro3_7@traceacode.com", "traceacode", "Stock",
+					"pcdev", 999934);
+			if (authResp.getLOGINResult() == 101) {
+				throw new Exception("Incorrect Call Parameter");
+			}
+			if (authResp.getLOGINResult() == 99) {
+				throw new Exception("Connection Error");
+			}
+			String token = authResp.getLOGINMessage();
+			int idConn = authResp.getLOGINConnexionId();
+			Integer idMessage = scannerStreamRepository.getSeqNextVal();
+			String param = idMessage + "|start";
+			SyncClient syncClient = new SyncClient();
+
+			
+			// START SYNCHRO
+			// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309,
+			// "tunnel","Stock","startsynchro", "3|Start");
+			TSYNCHRONISATIONResponse synchResp = syncClient.synchronization(token, idConn, "Tunnel", "Stock","startsynchro", param);
+			if (synchResp.getSYNCHRONISATIONMessageId() == 99) {
+				throw new Exception(synchResp.getSYNCHRONISATIONMessage());
+			}
+			String idProduction = synchResp.getSYNCHRONISATIONMessage();
+			// Costruisco param da passare all sycro sendtu
+			//Cotruisco il param da inviare alla synchro
+			List<ScannerStream> listScanner = scannerStreamRepository.findScannerStreamNotSendAndOK();
+			int intNBLigne = listScanner.size();
+			StringBuffer sb = new StringBuffer(idMessage + "|" + idProduction + "|" + intNBLigne + "|");
+			for (ScannerStream scannerStream : listScanner) {
+				List<ReaderStreamOnly> listStreamReader = readerStreamRepository.getReaderStreamDistinctByPackData(scannerStream.getPackageData());
+				String GTINBOX = getCode00GTINBOX(scannerStream.getPackageData());
+				String CodeWO = getCode10CodeWO(scannerStream.getPackageData());
+				String CodeArticle = getCode01CodeArticle(scannerStream.getPackageData());
+				String NbTU = getCode37NbTU(scannerStream.getPackageData());
+				sb.append(GTINBOX+ "|" + CodeWO + "|" + CodeArticle + "|" + NbTU);
+				for (ReaderStreamOnly readerStream : listStreamReader ) {
+					sb.append("|" + readerStream.getTid() );
+				}
+				scannerStream.setTimeInvio(new Timestamp(System.currentTimeMillis()));
+				scannerStreamRepository.save(scannerStream);
+			}
+			// SEND TU SYNCHRO
+			syncClient.synchronization(token, idConn, "Tunnel", "Stock", "sendtu", param);
+		
+
+		// STOP SYNCHRO
 		syncClient.synchronization(token, idConn, "Tunnel", "Stock", "stopsynchro", param);
-		
+
 		System.out.println("********* jobStreamReader start");
 		return null;
 	}

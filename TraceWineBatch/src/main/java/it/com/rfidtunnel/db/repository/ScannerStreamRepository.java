@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.db.repository;
+package it.com.rfidtunnel.db.repository;
 
 import java.util.List;
 
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
-import net.mcsistemi.rfidtunnel.db.entity.ScannerStream;
+import it.com.rfidtunnel.db.entity.ScannerStream;
 
 public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Long> {
 	
@@ -76,4 +76,8 @@ public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Lo
 	
 	@Query(value = "SELECT nextval('SynchroSerial') ", nativeQuery = true)
 	Integer getSeqNextVal();
+	
+	
+	@Query(value="select * from scanner_stream where dettaglio = 'N' and esito = 'OK' and dataInvio is null order by time_stamp desc", nativeQuery = true)
+	List<ScannerStream> findScannerStreamNotSendAndOK();
 }

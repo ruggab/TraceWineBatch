@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.batch.item;
+package it.com.rfidtunnel.batch.item;
 
 import java.util.List;
 

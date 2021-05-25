@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.batch;
+package it.com.rfidtunnel.batch;
 
 import javax.sql.DataSource;
 
@@ -16,11 +16,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import net.mcsistemi.rfidtunnel.batch.item.InvioStreamProcessor;
-import net.mcsistemi.rfidtunnel.batch.item.StreamReader;
-import net.mcsistemi.rfidtunnel.batch.item.StreamWriter;
-import net.mcsistemi.rfidtunnel.batch.listener.JobCompletionNotificationListener;
-import net.mcsistemi.rfidtunnel.batch.quartz.QuartzConfiguration;
+import it.com.rfidtunnel.batch.item.InvioStreamProcessor;
+import it.com.rfidtunnel.batch.item.StreamReader;
+import it.com.rfidtunnel.batch.item.StreamWriter;
+import it.com.rfidtunnel.batch.listener.JobCompletionNotificationListener;
+import it.com.rfidtunnel.batch.quartz.QuartzConfiguration;
 
 @Configuration
 @EnableBatchProcessing

@@ -1,7 +1,7 @@
-package net.mcsistemi.rfidtunnel.ws.test;
+package it.com.rfidtunnel.ws.test;
 
-import net.mcsistemi.rfidtunnel.ws.client.SyncClient;
-import net.mcsistemi.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
+import it.com.rfidtunnel.ws.client.SyncClient;
+import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
 
 
 

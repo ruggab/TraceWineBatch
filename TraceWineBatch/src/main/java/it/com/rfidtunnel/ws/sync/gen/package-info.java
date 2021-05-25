@@ -6,4 +6,4 @@
 //
 
 @javax.xml.bind.annotation.XmlSchema(namespace = "urn:WS_TRC_SYNCHRONISATION")
-package net.mcsistemi.rfidtunnel.ws.sync.gen;
+package it.com.rfidtunnel.ws.sync.gen;

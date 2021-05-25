@@ -1,4 +1,4 @@
-package net.mcsistemi.rfidtunnel.batch.quartz;
+package it.com.rfidtunnel.batch.quartz;
 
 import java.util.HashMap;
 import java.util.Map;

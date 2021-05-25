@@ -1,12 +1,12 @@
-package net.mcsistemi.rfidtunnel.ws.client;
+package it.com.rfidtunnel.ws.client;
 
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
-import net.mcsistemi.rfidtunnel.ws.sync.gen.TSYNCHRONISATION;
-import net.mcsistemi.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
+import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION;
+import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
 
 public class SyncClient extends WebServiceGatewaySupport {
 
