@@ -5,20 +5,21 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION;
 import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
 
 public class SyncClient extends WebServiceGatewaySupport {
 
 	public SyncClient() {
-		this.setDefaultUri("http://back.traceawine.com/webservices3/Synchronisation/WS_Synchronisation.php");
+		this.setDefaultUri(PropertiesUtil.getWsSynchUrl());
 		this.setMarshaller(marshaller());
 		this.setUnmarshaller(marshaller());
 	}
 
 	private Jaxb2Marshaller marshaller() {
 		Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
-		marshaller.setContextPath("net.mcsistemi.rfidtunnel.ws.client.gen");
+		marshaller.setContextPath("it.com.rfidtunnel.ws.sync.gen");
 		return marshaller;
 	}
 	

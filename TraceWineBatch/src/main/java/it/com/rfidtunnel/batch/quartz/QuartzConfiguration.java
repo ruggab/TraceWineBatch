@@ -14,6 +14,8 @@ import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
+import it.com.rfidtunnel.batch.util.PropertiesUtil;
+
 /**
  * The Class QuartzConfiguration.
  *
@@ -56,7 +58,8 @@ public class QuartzConfiguration {
 //		ctFactory.setStartDelay(3000);
 //		ctFactory.setName("cron_trigger");
 //		ctFactory.setGroup("cron_group");
-		ctFactory.setCronExpression("*/10 * * * * ? *"); 
+		//ctFactory.setCronExpression("*/10 * * * * ? *"); 
+		ctFactory.setCronExpression(PropertiesUtil.getCronExpression());
 		return ctFactory;
 	}
 

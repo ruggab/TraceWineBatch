@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGIN;
 import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGINResponse;
 import it.com.rfidtunnel.ws.auth.gen.TLOGIN;
@@ -17,7 +18,7 @@ import it.com.rfidtunnel.ws.auth.gen.TLOGOUTResponse;
 public class AuthClient extends WebServiceGatewaySupport {
 
 	public AuthClient() {
-		this.setDefaultUri("http://back.traceawine.com/webservices3/Authentication/WS_Authentication.php");
+		this.setDefaultUri(PropertiesUtil.getWsAuthUrl());
 		this.setMarshaller(marshaller());
 		this.setUnmarshaller(marshaller());
 	}

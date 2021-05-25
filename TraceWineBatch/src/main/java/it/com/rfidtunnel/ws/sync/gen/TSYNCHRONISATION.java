@@ -2,7 +2,7 @@
 // Questo file è stato generato dall'architettura JavaTM per XML Binding (JAXB) Reference Implementation, v2.3.0 
 // Vedere <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 // Qualsiasi modifica a questo file andrà persa durante la ricompilazione dello schema di origine. 
-// Generato il: 2021.05.23 alle 07:28:03 AM CEST 
+// Generato il: 2021.05.26 alle 12:11:57 AM CEST 
 //
 
 
@@ -11,6 +11,7 @@ package it.com.rfidtunnel.ws.sync.gen;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -47,6 +48,7 @@ import javax.xml.bind.annotation.XmlType;
     "function",
     "params"
 })
+@XmlRootElement(name = "SYNCHRONISATION")
 public class TSYNCHRONISATION {
 
     @XmlElement(name = "IdConnexion")

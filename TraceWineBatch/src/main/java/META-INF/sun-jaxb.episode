@@ -6,7 +6,7 @@
 Questo file è stato generato dall'architettura JavaTM per XML Binding (JAXB) Reference Implementation, v2.3.0 
 Vedere <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 Qualsiasi modifica a questo file andrà persa durante la ricompilazione dello schema di origine. 
-Generato il: 2021.05.25 alle 11:44:09 AM CEST 
+Generato il: 2021.05.26 alle 12:11:57 AM CEST 
 
   -->
       
@@ -14,19 +14,19 @@ Generato il: 2021.05.25 alle 11:44:09 AM CEST
             
         <schemaBindings map="false">
                   
-            <package name="net.mcsistemi.rfidtunnel.sync.gen"/>
+            <package name="it.com.rfidtunnel.ws.sync.gen"/>
                 
         </schemaBindings>
             
         <bindings if-exists="true" scd="~tns:tSYNCHRONISATION">
                   
-            <class ref="net.mcsistemi.rfidtunnel.sync.gen.TSYNCHRONISATION"/>
+            <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION"/>
                 
         </bindings>
             
         <bindings if-exists="true" scd="~tns:tSYNCHRONISATIONResponse">
                   
-            <class ref="net.mcsistemi.rfidtunnel.sync.gen.TSYNCHRONISATIONResponse"/>
+            <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse"/>
                 
         </bindings>
           

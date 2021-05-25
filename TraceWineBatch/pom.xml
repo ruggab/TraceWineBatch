@@ -77,7 +77,7 @@
 				<configuration>
 					<schemaLanguage>WSDL</schemaLanguage>
 					<generateDirectory>${project.basedir}/src/main/java</generateDirectory>
-					<generatePackage>net.mcsistemi.rfidtunnel.auth.gen</generatePackage>
+					<generatePackage>it.com.rfidtunnel.ws.auth.gen</generatePackage>
 					<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
 					<schemaIncludes>
 						<include>TraceWineAutentication.wsdl</include>
@@ -102,7 +102,7 @@
 				<configuration>
 					<schemaLanguage>WSDL</schemaLanguage>
 					<generateDirectory>${project.basedir}/src/main/java</generateDirectory>
-					<generatePackage>net.mcsistemi.rfidtunnel.sync.gen</generatePackage>
+					<generatePackage>it.com.rfidtunnel.ws.sync.gen</generatePackage>
 					<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
 					<schemaIncludes>
 						<include>TraceWineSynchronisation.wsdl</include>
