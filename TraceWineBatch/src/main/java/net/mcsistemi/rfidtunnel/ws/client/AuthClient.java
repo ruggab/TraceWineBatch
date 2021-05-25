@@ -1,5 +1,7 @@
 package net.mcsistemi.rfidtunnel.ws.client;
 
+import java.util.Random;
+
 import javax.xml.bind.JAXBElement;
 
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
@@ -28,7 +30,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 
 	public TLOGINResponse getLoginResp(String usr, String psw, String app, String host, int idSoc) {
 		TLOGIN request = new TLOGIN();
-		request.setApplication(app);
+		request.setApplication(fnScript(app));
 		request.setHost(host);
 		request.setIdSociete(idSoc);
 		request.setPass(psw);
@@ -41,7 +43,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 	
 	public TLOGOUTResponse getLogOutResp(String token, String app, int idConn) {
 		TLOGOUT request = new TLOGOUT();
-		request.setApplication(app);
+		request.setApplication(fnScript(app));
 		request.setIdConnexion(idConn);
 		request.setToken(token);
 		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
@@ -58,5 +60,43 @@ public class AuthClient extends WebServiceGatewaySupport {
 		TCHECKLOGINResponse resp = (TCHECKLOGINResponse)response.getValue();
 		return resp;
 	}
+	
+	private static String fnScript(String strTexte)
+	{
+		Random random = new Random();
+		String empty = "";
+		int length = strTexte.length();
+		int intDecalage = random.nextInt(20) + 1;
+		empty = Integer.toHexString(intDecalage);
+		int num = 0;
+		for (length = 0; length < strTexte.length(); length++)
+		{
+			empty += Integer.toHexString(cryptBye((byte)strTexte.charAt(length), intDecalage, num));
+			if (num == 5)
+			{
+				num = 0;
+				intDecalage = random.nextInt(20) + 1;
+				empty += Integer.toHexString(intDecalage);
+			}
+			else
+			{
+				num++;
+			}
+		}
+		return empty;
+	}
+	
+	
+	private static byte cryptBye(byte bteValeur, int intDecalage, int intShift)
+	{
+		int num = bteValeur + intDecalage + 7 * intShift;
+		if (num > 255)
+		{
+			num -= 255;
+		}
+		return (byte)num;
+	}
+
+
 
 }
