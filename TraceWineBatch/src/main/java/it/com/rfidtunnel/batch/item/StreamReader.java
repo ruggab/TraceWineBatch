@@ -112,32 +112,32 @@ public class StreamReader implements ItemReader<Object> {
 	}
 
 	private static String getCode00GTINBOX(String packageId) {
-		String ret = "";
+		String ret = packageId;
 		ret = ret.substring(ret.lastIndexOf("(00)") + 4, ret.indexOf("(01)"));
 
 		return ret;
 	}
 
 	private static String getCode01CodeArticle(String packageId) {
-		String ret = "";
+		String ret = packageId;
 		ret = ret.substring(ret.lastIndexOf("(01)") + 4, ret.indexOf("(10)"));
 		return ret;
 	}
 
 	private static String getCode10CodeWO(String packageId) {
-		String ret = "";
+		String ret = packageId;
 		ret = ret.substring(ret.lastIndexOf("(10)") + 4, ret.indexOf("(21)"));
 		return ret;
 	}
 
 	private static String getCode21(String packageId) {
-		String ret = "";
+		String ret = packageId;
 		ret = ret.substring(ret.lastIndexOf("(21)") + 4, ret.indexOf("(37)"));
 		return ret;
 	}
 
 	private static String getCode37NbTU(String packageId) {
-		String ret = "";
+		String ret = packageId;
 		ret = ret.substring(ret.lastIndexOf("(37)") + 4, ret.length());
 		return ret;
 	}

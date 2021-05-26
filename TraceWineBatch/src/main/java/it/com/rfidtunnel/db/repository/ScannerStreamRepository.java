@@ -78,6 +78,6 @@ public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Lo
 	Integer getSeqNextVal();
 	
 	
-	@Query(value="select * from scanner_stream where dettaglio = 'N' and esito = 'OK' and dataInvio is null order by time_stamp desc", nativeQuery = true)
+	@Query(value="select * from scanner_stream where dettaglio = 'Y' and esito = 'OK' and time_invio is null order by time_stamp desc", nativeQuery = true)
 	List<ScannerStream> findScannerStreamNotSendAndOK();
 }
