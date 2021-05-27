@@ -5,6 +5,7 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import it.com.rfidtunnel.batch.util.BatchUtil;
 import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION;
 import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
@@ -26,7 +27,7 @@ public class SyncClient extends WebServiceGatewaySupport {
 	public TSYNCHRONISATIONResponse synchronization(String token, int idConn,  String sbj, String app, String func, String param) {
 		
 		TSYNCHRONISATION request = new TSYNCHRONISATION();
-		request.setApplication(app);
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setFunction(func);
 		request.setIdConnexion(idConn);
 		request.setToken(token);
@@ -41,7 +42,7 @@ public class SyncClient extends WebServiceGatewaySupport {
 	public String startSynchro(String token, int idConn,  String sbj, String app, String func, String param) {
 		String msgIdProd = "";
 		TSYNCHRONISATION request = new TSYNCHRONISATION();
-		request.setApplication(app);
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setFunction(func);
 		request.setIdConnexion(idConn);
 		request.setToken(token);
@@ -56,7 +57,7 @@ public class SyncClient extends WebServiceGatewaySupport {
 	
 	public TSYNCHRONISATIONResponse sendTu(String token, int idCon, String sbj, String app, String func, String param) {
 		TSYNCHRONISATION request = new TSYNCHRONISATION();
-		request.setApplication(app);
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setFunction(func);
 		request.setIdConnexion(idCon);
 		request.setToken(token);
@@ -70,7 +71,7 @@ public class SyncClient extends WebServiceGatewaySupport {
 	public String stopSynchro(String token, int idConn,  String sbj, String app, String func, String param) {
 		String msgIdProd = "";
 		TSYNCHRONISATION request = new TSYNCHRONISATION();
-		request.setApplication(app);
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setFunction(func);
 		request.setIdConnexion(idConn);
 		request.setToken(token);

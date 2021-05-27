@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBElement;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 
+import it.com.rfidtunnel.batch.util.BatchUtil;
 import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGIN;
 import it.com.rfidtunnel.ws.auth.gen.TCHECKLOGINResponse;
@@ -31,11 +32,11 @@ public class AuthClient extends WebServiceGatewaySupport {
 
 	public TLOGINResponse getLoginResp(String usr, String psw, String app, String host, int idSoc) {
 		TLOGIN request = new TLOGIN();
-		request.setApplication(fnScript(app));
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setHost(host);
 		request.setIdSociete(idSoc);
-		request.setPass(fnScript(psw));
-		request.setUser(fnScript(usr));
+		request.setPass(BatchUtil.fnScript(psw));
+		request.setUser(BatchUtil.fnScript(usr));
 
 		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
 		TLOGINResponse resp = (TLOGINResponse)response.getValue();
@@ -44,7 +45,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 	
 	public TLOGOUTResponse getLogOutResp(String token, String app, int idConn) {
 		TLOGOUT request = new TLOGOUT();
-		request.setApplication(fnScript(app));
+		request.setApplication(BatchUtil.fnScript(app));
 		request.setIdConnexion(idConn);
 		request.setToken(token);
 		JAXBElement<Object> response = (JAXBElement<Object>)getWebServiceTemplate().marshalSendAndReceive(request);
@@ -62,43 +63,7 @@ public class AuthClient extends WebServiceGatewaySupport {
 		return resp;
 	}
 	
-	private static String fnScript(String strTexte)
-	{
-		Random random = new Random();
-		String empty = "";
-		int length = strTexte.length();
-		int intDecalage = random.nextInt(20) + 1;
-		empty = String.format("%02X",intDecalage);
-		int num = 0;
-		for (length = 0; length < strTexte.length(); length++)
-		{
-			byte bb = cryptBye((byte)strTexte.charAt(length), intDecalage, num);
-			empty += String.format("%02X", bb);
-			if (num == 5)
-			{
-				num = 0;
-				intDecalage = random.nextInt(20) + 1;
-				empty += String.format("%02X",intDecalage);
-			}
-			else
-			{
-				num++;
-			}
-		}
-		return empty;
-	}
 	
-	
-	private static byte cryptBye(byte bteValeur, int intDecalage, int intShift)
-	{
-		int num = bteValeur + intDecalage + 7 * intShift;
-		if (num > 255)
-		{
-			num -= 255;
-		}
-		return (byte)num;
-	}
-
 
 
 }
