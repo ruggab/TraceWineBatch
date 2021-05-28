@@ -39,7 +39,7 @@ public class QuartzConfiguration {
 	@Bean
 	public JobDetailFactoryBean jobDetailFactoryBean() {
 		JobDetailFactoryBean jobfactory = new JobDetailFactoryBean();
-		jobfactory.setJobClass(QuartzJobLauncher.class);
+		jobfactory.setJobClass(RecuperaInviaStreamJob.class);
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("jobName", "recuperaInviaStreamJob");
 		map.put("jobLauncher", jobLauncher);
