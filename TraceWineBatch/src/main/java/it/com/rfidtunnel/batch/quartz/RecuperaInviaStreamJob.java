@@ -1,5 +1,6 @@
 package it.com.rfidtunnel.batch.quartz;
 
+import org.quartz.DisallowConcurrentExecution;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 import it.com.rfidtunnel.db.services.DataStreamService;
 
 @Component
+@DisallowConcurrentExecution
 public class RecuperaInviaStreamJob implements Job {
 
     @Autowired
