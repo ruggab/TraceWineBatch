@@ -43,7 +43,7 @@ public class ScannerStream {
 	@Transient
 	private String dataForm;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+
 	private Date timeInvio;
 	
 

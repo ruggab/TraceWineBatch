@@ -1,5 +1,6 @@
 package it.com.rfidtunnel.db.repository;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -7,9 +8,11 @@ import javax.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 
 import it.com.rfidtunnel.db.entity.ScannerStream;
 
+@Repository
 public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Long> {
 	
 //	@Query(value="select s.id, s.pack_id , s.time_stamp, count(distinct(epc)) epc_count from scanner_stream s\n" + 
@@ -28,6 +31,11 @@ public interface ScannerStreamRepository extends JpaRepository<ScannerStream, Lo
 	@Transactional
 	@Query(value="delete from scanner_stream where pack_id = ?1 ", nativeQuery = true)
 	void deleteScannerByPackId(String packId);
+	
+	@Modifying
+	@Transactional
+	@Query(value="update scanner_stream set time_invio = ?1 where pack_id = ?2 ", nativeQuery = true)
+	void updateTimeInvioScannerByPackId(Timestamp timeinvio,  Long packId);
 	
 	
 	@Query(value="select * from scanner_stream where dettaglio = 'N' order by time_stamp desc fetch first 1 rows only ", nativeQuery = true)

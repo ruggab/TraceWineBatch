@@ -1,38 +1,35 @@
-package it.com.rfidtunnel.batch.item;
+package it.com.rfidtunnel.db.services;
 
 import java.sql.Timestamp;
-import java.util.Iterator;
 import java.util.List;
-
-import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.NonTransientResourceException;
 import org.springframework.batch.item.ParseException;
 import org.springframework.batch.item.UnexpectedInputException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.db.entity.ScannerStream;
-import it.com.rfidtunnel.db.repository.ReaderStreamAttesoRepository;
 import it.com.rfidtunnel.db.repository.ReaderStreamRepository;
-import it.com.rfidtunnel.db.repository.ScannerStreamRepository;
 import it.com.rfidtunnel.db.repository.ReaderStreamRepository.ReaderStreamOnly;
+import it.com.rfidtunnel.db.repository.ScannerStreamRepository;
 import it.com.rfidtunnel.ws.auth.gen.TLOGINResponse;
 import it.com.rfidtunnel.ws.auth.gen.TLOGOUTResponse;
 import it.com.rfidtunnel.ws.client.AuthClient;
 import it.com.rfidtunnel.ws.client.SyncClient;
 import it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse;
 
-/**
- * The Class StreamReader.
- *
- * @author ashraf
- */
-public class StreamReader implements ItemReader<Object> {
-	private static final Logger log = LoggerFactory.getLogger(StreamWriter.class);
+
+
+
+@Service
+public class DataStreamService  {
+
+	private static final Logger log = LoggerFactory.getLogger(DataStreamService.class);
 
 	@Autowired
 	private ReaderStreamRepository readerStreamRepository;
@@ -40,9 +37,9 @@ public class StreamReader implements ItemReader<Object> {
 	@Autowired
 	private ScannerStreamRepository scannerStreamRepository;
 
-	@Override
+	
 	@Transactional
-	public Object read() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+	public void inviaDati() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
 
 		// Login WSss
@@ -92,10 +89,8 @@ public class StreamReader implements ItemReader<Object> {
 					sb.append(readerStream.getTid()+ ";");
 				}
 			}
-			//
-			ScannerStream scNew = scannerStreamRepository.getById(scannerStream.getId());
-			scNew.setTimeInvio(new Timestamp(System.currentTimeMillis()));
-			scannerStreamRepository.saveAndFlush(scNew);
+			scannerStream.setTimeInvio(new Timestamp(System.currentTimeMillis()));
+			scannerStreamRepository.save(scannerStream);
 		}
 		String paramSendTu = sb.substring(0, sb.length() - 1);
 		// SEND TU SYNCHRO
@@ -128,7 +123,7 @@ public class StreamReader implements ItemReader<Object> {
 		}
 
 		System.out.println("********* jobStreamReader terminated");
-		return null;
+		
 	}
 
 	private static String getCode00GTINBOX(String packageId) {
@@ -161,11 +156,11 @@ public class StreamReader implements ItemReader<Object> {
 		ret = ret.substring(ret.lastIndexOf("(37)") + 4, ret.length());
 		return ret;
 	}
+	
+	
 
-	public static void main(String[] args) {
-		String app = "(00)012345678000045456(01)30379000027876(10)33333333(21)9012(37)6";
-		String ret = getCode00GTINBOX(app);
-		log.info(ret);
+	
+	
 
-	}
+	
 }
