@@ -55,6 +55,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -63,52 +69,20 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!-- plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.14.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<schemaLanguage>WSDL</schemaLanguage>
-					<generateDirectory>${project.basedir}/src/main/java</generateDirectory>
-					<generatePackage>it.com.rfidtunnel.ws.auth.gen</generatePackage>
-					<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
-					<schemaIncludes>
-						<include>TraceWineAutentication.wsdl</include>
-					</schemaIncludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jvnet.jaxb2.maven2</groupId>
-				<artifactId>maven-jaxb2-plugin</artifactId>
-				<version>0.14.0</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<schemaLanguage>WSDL</schemaLanguage>
-					<generateDirectory>${project.basedir}/src/main/java</generateDirectory>
-					<generatePackage>it.com.rfidtunnel.ws.sync.gen</generatePackage>
-					<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory>
-					<schemaIncludes>
-						<include>TraceWineSynchronisation.wsdl</include>
-					</schemaIncludes>
-				</configuration>
-			</plugin-->
+			<!-- plugin> <groupId>org.jvnet.jaxb2.maven2</groupId> <artifactId>maven-jaxb2-plugin</artifactId> 
+				<version>0.14.0</version> <executions> <execution> <goals> <goal>generate</goal> 
+				</goals> </execution> </executions> <configuration> <schemaLanguage>WSDL</schemaLanguage> 
+				<generateDirectory>${project.basedir}/src/main/java</generateDirectory> <generatePackage>it.com.rfidtunnel.ws.auth.gen</generatePackage> 
+				<schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory> 
+				<schemaIncludes> <include>TraceWineAutentication.wsdl</include> </schemaIncludes> 
+				</configuration> </plugin> <plugin> <groupId>org.springframework.boot</groupId> 
+				<artifactId>spring-boot-maven-plugin</artifactId> </plugin> <plugin> <groupId>org.jvnet.jaxb2.maven2</groupId> 
+				<artifactId>maven-jaxb2-plugin</artifactId> <version>0.14.0</version> <executions> 
+				<execution> <goals> <goal>generate</goal> </goals> </execution> </executions> 
+				<configuration> <schemaLanguage>WSDL</schemaLanguage> <generateDirectory>${project.basedir}/src/main/java</generateDirectory> 
+				<generatePackage>it.com.rfidtunnel.ws.sync.gen</generatePackage> <schemaDirectory>${project.basedir}/src/main/resources</schemaDirectory> 
+				<schemaIncludes> <include>TraceWineSynchronisation.wsdl</include> </schemaIncludes> 
+				</configuration> </plugin -->
 		</plugins>
 	</build>
 

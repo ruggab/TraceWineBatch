@@ -1,18 +1,14 @@
 package it.com.rfidtunnel.batch.quartz;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.activation.DataSource;
 
-import org.springframework.batch.core.configuration.JobLocator;
-import org.springframework.batch.core.configuration.JobRegistry;
-import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
-import org.springframework.batch.core.launch.JobLauncher;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import it.com.rfidtunnel.batch.util.PropertiesUtil;
 
@@ -22,31 +18,28 @@ import it.com.rfidtunnel.batch.util.PropertiesUtil;
  * @author ashraf
  */
 @Configuration
-public class QuartzConfiguration {
+public class QuartzConfig {
 	
-	@Autowired
-	private JobLauncher jobLauncher;
-	@Autowired
-	private JobLocator jobLocator;
+	
+
+	private ApplicationContext applicationContext;
+	
+
+	public QuartzConfig(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
 	@Bean
-	public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
-		JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
-		jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
-		return jobRegistryBeanPostProcessor;
+	public SpringBeanJobFactory springBeanJobFactory() {
+		AutowiringSpringBeanJobFactory jobFactory = new AutowiringSpringBeanJobFactory();
+		jobFactory.setApplicationContext(applicationContext);
+		return jobFactory;
 	}
-	
+
 	@Bean
 	public JobDetailFactoryBean jobDetailFactoryBean() {
 		JobDetailFactoryBean jobfactory = new JobDetailFactoryBean();
 		jobfactory.setJobClass(RecuperaInviaStreamJob.class);
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("jobName", "recuperaInviaStreamJob");
-		map.put("jobLauncher", jobLauncher);
-		map.put("jobLocator", jobLocator);
-		jobfactory.setJobDataAsMap(map);
-//		jobfactory.setGroup("etl_group");
-//		jobfactory.setName("etl_job");
 		return jobfactory;
 	}
 
@@ -58,7 +51,7 @@ public class QuartzConfiguration {
 //		ctFactory.setStartDelay(3000);
 //		ctFactory.setName("cron_trigger");
 //		ctFactory.setGroup("cron_group");
-		//ctFactory.setCronExpression("*/10 * * * * ? *"); 
+		// ctFactory.setCronExpression("*/10 * * * * ? *");
 		ctFactory.setCronExpression(PropertiesUtil.getCronExpression());
 		return ctFactory;
 	}
@@ -67,6 +60,12 @@ public class QuartzConfiguration {
 	public SchedulerFactoryBean schedulerFactoryBean() {
 		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
 		scheduler.setTriggers(cronTriggerFactoryBean().getObject());
+		scheduler.setOverwriteExistingJobs(true);
+		scheduler.setAutoStartup(true);
+		//scheduler.setQuartzProperties (properties);
+		//scheduler.setDataSource (dataSource);
+		scheduler.setJobFactory(springBeanJobFactory());
+		scheduler.setWaitForJobsToCompleteOnShutdown(true);
 		return scheduler;
 	}
 

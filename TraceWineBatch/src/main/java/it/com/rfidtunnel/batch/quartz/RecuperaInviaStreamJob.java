@@ -14,6 +14,7 @@ public class RecuperaInviaStreamJob implements Job {
     @Autowired
     private DataStreamService jobService;
 
+    @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
 			jobService.inviaDati();
