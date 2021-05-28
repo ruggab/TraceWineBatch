@@ -1,5 +1,7 @@
 package it.com.rfidtunnel.batch.quartz;
 
+import java.util.Properties;
+
 import javax.activation.DataSource;
 
 import org.springframework.context.ApplicationContext;
@@ -19,11 +21,8 @@ import it.com.rfidtunnel.batch.util.PropertiesUtil;
  */
 @Configuration
 public class QuartzConfig {
-	
-	
 
 	private ApplicationContext applicationContext;
-	
 
 	public QuartzConfig(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -48,22 +47,28 @@ public class QuartzConfig {
 	public CronTriggerFactoryBean cronTriggerFactoryBean() {
 		CronTriggerFactoryBean ctFactory = new CronTriggerFactoryBean();
 		ctFactory.setJobDetail(jobDetailFactoryBean().getObject());
-//		ctFactory.setStartDelay(3000);
-//		ctFactory.setName("cron_trigger");
-//		ctFactory.setGroup("cron_group");
+		// ctFactory.setStartDelay(3000);
+		// ctFactory.setName("cron_trigger");
+		// ctFactory.setGroup("cron_group");
 		// ctFactory.setCronExpression("*/10 * * * * ? *");
 		ctFactory.setCronExpression(PropertiesUtil.getCronExpression());
 		return ctFactory;
 	}
 
+	public static final int DEFAULT_THREAD_COUNT = 1;
+
 	@Bean
 	public SchedulerFactoryBean schedulerFactoryBean() {
+		Properties properties = new Properties();
+
+		properties.setProperty("org.quartz.threadPool.threadCount", "1");
+
 		SchedulerFactoryBean scheduler = new SchedulerFactoryBean();
 		scheduler.setTriggers(cronTriggerFactoryBean().getObject());
 		scheduler.setOverwriteExistingJobs(true);
 		scheduler.setAutoStartup(true);
-		//scheduler.setQuartzProperties (properties);
-		//scheduler.setDataSource (dataSource);
+		scheduler.setQuartzProperties(properties);
+		// scheduler.setDataSource (dataSource);
 		scheduler.setJobFactory(springBeanJobFactory());
 		scheduler.setWaitForJobsToCompleteOnShutdown(true);
 		return scheduler;
