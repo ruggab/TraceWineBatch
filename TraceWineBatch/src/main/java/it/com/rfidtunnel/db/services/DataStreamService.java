@@ -1,5 +1,6 @@
 package it.com.rfidtunnel.db.services;
 
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -72,7 +73,7 @@ public class DataStreamService {
 			StringBuffer sb = new StringBuffer(idMessage + "|" + idProduction + "|" + intNBLigne + ";");
 			String GTINBOX = "", CodeWO = "", CodeArticle = "", NbTU = "";
 			for (ScannerStream scannerStream : listScanner) {
-				List<ReaderStreamOnly> listStreamReader = readerStreamRepository.getReaderStreamDistinctByPackData(scannerStream.getPackageData());
+				List<ReaderStreamOnly> listStreamReader = readerStreamRepository.getReaderStreamDistinctByPackData(scannerStream.getId(), scannerStream.getPackageData());
 				GTINBOX = getCode00GTINBOX(scannerStream.getPackageData());
 				CodeWO = getCode10CodeWO(scannerStream.getPackageData());
 				CodeArticle = getCode01CodeArticle(scannerStream.getPackageData());
@@ -80,10 +81,12 @@ public class DataStreamService {
 				sb.append(GTINBOX + "|" + CodeWO + "|" + NbTU + "|");
 				for (int i = 0; i < listStreamReader.size(); i++) {
 					ReaderStreamOnly readerStream = listStreamReader.get(i);
+					String tidSub = readerStream.getTid().substring(12,readerStream.getTid().length());
+					BigInteger tid = new BigInteger(tidSub, 16);
 					if (i < listStreamReader.size() - 1) {
-						sb.append(readerStream.getTid() + ",");
+						sb.append(tid + ",");
 					} else {
-						sb.append(readerStream.getTid() + ";");
+						sb.append(tid + ";");
 					}
 				}
 				scannerStream.setTimeInvio(new Timestamp(System.currentTimeMillis()));
@@ -91,8 +94,9 @@ public class DataStreamService {
 			}
 			String paramSendTu = sb.substring(0, sb.length() - 1);
 			// SEND TU SYNCHRO
+			paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
 			TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
-			if (synchRespSendtu.getSYNCHRONISATIONResult() == 999) {
+			if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
 				throw new Exception(synchRespSendtu.getSYNCHRONISATIONMessage());
 			}
 			if (synchRespSendtu.getSYNCHRONISATIONResult() == 101) {
@@ -125,35 +129,56 @@ public class DataStreamService {
 
 	}
 
+	//(00)1111(01)2222(10)33333(21)444444(27)555555
+	
 	private static String getCode00GTINBOX(String packageId) {
-		String ret = packageId;
-		ret = ret.substring(ret.lastIndexOf("(00)") + 4, ret.indexOf("(01)"));
-
-		return ret;
+		String [] arr = packageId.split("\\(");
+		for (String el : arr) {
+			if (el.contains("00")) {
+				return el.substring(el.lastIndexOf("00)") + 3, el.length());
+			}
+		}
+		return "";
 	}
 
 	private static String getCode01CodeArticle(String packageId) {
-		String ret = packageId;
-		ret = ret.substring(ret.lastIndexOf("(01)") + 4, ret.indexOf("(10)"));
-		return ret;
+		String [] arr = packageId.split("\\(");
+		for (String el : arr) {
+			if (el.contains("01")) {
+				return el.substring(el.lastIndexOf("01)") + 3, el.length());
+			}
+		}
+		return "";
 	}
 
 	private static String getCode10CodeWO(String packageId) {
-		String ret = packageId;
-		ret = ret.substring(ret.lastIndexOf("(10)") + 4, ret.indexOf("(21)"));
-		return ret;
+		String [] arr = packageId.split("\\(");
+		for (String el : arr) {
+			if (el.contains("10")) {
+				return el.substring(el.lastIndexOf("10)") + 3, el.length());
+			}
+		}
+		return "";
 	}
 
 	private static String getCode21(String packageId) {
-		String ret = packageId;
-		ret = ret.substring(ret.lastIndexOf("(21)") + 4, ret.indexOf("(37)"));
-		return ret;
+		String [] arr = packageId.split("\\(");
+		for (String el : arr) {
+			if (el.contains("21")) {
+				return  el.substring(el.lastIndexOf("21)") + 3, el.length());
+			}
+		}
+		return "";
 	}
 
 	private static String getCode37NbTU(String packageId) {
-		String ret = packageId;
-		ret = ret.substring(ret.lastIndexOf("(37)") + 4, ret.length());
-		return ret;
+		String [] arr = packageId.split("\\(");
+		for (String el : arr) {
+			if (el.contains("37")) {
+				return el.substring(el.lastIndexOf("37)") + 3, el.length());
+			}
+		}
+		return "";
 	}
 
 }
