@@ -19,6 +19,6 @@ public interface PackageSentWsRepository extends JpaRepository<PackageSentWs, Lo
 	Integer getSeqNextVal();
 	
 	
-	@Query(value="select * from package_sent_ws where sent = 'false' ", nativeQuery = true)
+	@Query(value="select * from package_sent_ws where id_send = (select max(id_send) from package_sent_ws where sent = false)", nativeQuery = true)
 	List<PackageSentWs> getPackageSentWsNotSend();
 }

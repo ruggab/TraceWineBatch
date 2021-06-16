@@ -25,6 +25,8 @@ public class PackageSentWs {
 
 	private String nbtu;
 	
+	private Integer nbarticle;
+	
 	@Column(name = "tid_list")
 	private String tidList;
 
@@ -117,6 +119,18 @@ public class PackageSentWs {
 
 	public void setSent(boolean sent) {
 		this.sent = sent;
+	}
+
+
+
+	public Integer getNbarticle() {
+		return nbarticle;
+	}
+
+
+
+	public void setNbarticle(Integer nbarticle) {
+		this.nbarticle = nbarticle;
 	}
 
 	
