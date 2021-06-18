@@ -41,10 +41,24 @@ public class DataStreamService {
 	@Transactional
 	public void inviaDati() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
-		List<PackageSentWs> listPackage = packageSentWsRepository.getPackageSentWsNotSend();
-		
-		if (listPackage.size() > 0) {
-			Long idMessage = listPackage.get(0).getIdSend();
+		//trovo il primo package da inviare
+		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend();
+		List<PackageSentWs> listPackage = null;
+		Long idMessage = null;
+		if (packageNotSend != null) {
+			idMessage = packageNotSend.getIdSend();
+			int maxinvvi = new Integer(PropertiesUtil.getMaxnumsend());
+			int logKo = logTraceWineRepository.getLogKOByIdSend(idMessage);
+			int logOk = logTraceWineRepository.getLogOKByIdSend(idMessage);
+			if (logOk == 0 && logKo < maxinvvi) {
+				//Cerco tutti i package per idSend da inviare 
+				listPackage = packageSentWsRepository.findPackageByIdSend(packageNotSend.getIdSend());
+			}
+			
+		}
+			
+		if (listPackage != null && listPackage.size() > 0) {
+			
 			try {
 
 				// Login WSss
