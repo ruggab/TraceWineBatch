@@ -42,19 +42,14 @@ public class DataStreamService {
 	public void inviaDati() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
 		//trovo il primo package da inviare
-		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend();
+		Long numMacSent = new Long(PropertiesUtil.getMaxnumsend());
+		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend(numMacSent);
 		List<PackageSentWs> listPackage = null;
 		Long idMessage = null;
 		if (packageNotSend != null) {
 			idMessage = packageNotSend.getIdSend();
-			int maxinvvi = new Integer(PropertiesUtil.getMaxnumsend());
-			int logKo = logTraceWineRepository.getLogKOByIdSend(idMessage);
-			int logOk = logTraceWineRepository.getLogOKByIdSend(idMessage);
-			if (logOk == 0 && logKo < maxinvvi) {
-				//Cerco tutti i package per idSend da inviare 
-				listPackage = packageSentWsRepository.findPackageByIdSend(packageNotSend.getIdSend());
-			}
-			
+			//Cerco tutti i package per idSend da inviare 
+			listPackage = packageSentWsRepository.findPackageByIdSend(packageNotSend.getIdSend());
 		}
 			
 		if (listPackage != null && listPackage.size() > 0) {
