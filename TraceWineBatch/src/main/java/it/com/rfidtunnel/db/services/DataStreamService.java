@@ -28,39 +28,38 @@ public class DataStreamService {
 
 	private static final Logger log = LoggerFactory.getLogger(DataStreamService.class);
 
-//	@Autowired
-//	private ReaderStreamRepository readerStreamRepository;
+	// @Autowired
+	// private ReaderStreamRepository readerStreamRepository;
 
 	@Autowired
 	private PackageSentWsRepository packageSentWsRepository;
 
 	@Autowired
 	private LogTraceWineRepository logTraceWineRepository;
-	
-	
+
 	@Transactional
 	public void inviaDati() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
-		//trovo il primo package da inviare
+		// trovo il primo package da inviare
 		Long numMacSent = new Long(PropertiesUtil.getMaxnumsend());
 		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend(numMacSent);
 		List<PackageSentWs> listPackage = null;
 		Long idMessage = null;
 		if (packageNotSend != null) {
 			idMessage = packageNotSend.getIdSend();
-			//Cerco tutti i package per idSend da inviare 
+			// Cerco tutti i package per idSend da inviare
 			listPackage = packageSentWsRepository.findPackageByIdSend(packageNotSend.getIdSend());
 		}
-			
+
 		if (listPackage != null && listPackage.size() > 0) {
-			
+			String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "", idProduction = "";
+			int intNbArticle = 0, intNBLigne = 0;
+			LogTraceWine logTraceWine = new LogTraceWine();
 			try {
 
 				// Login WSss
 				AuthClient authClient = new AuthClient();
-				TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(),
-						PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(),
-						PropertiesUtil.getIdCompany());
+				TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(), PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(), PropertiesUtil.getIdCompany());
 				if (authResp.getLOGINResult() == 101) {
 					throw new Exception("Authentication login error: Incorrect Call Parameter");
 				}
@@ -76,22 +75,20 @@ public class DataStreamService {
 				// START SYNCHRO
 				// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309,
 				// "tunnel","Stock","startsynchro", "3|Start");
-				TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn,
-						PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(),
-						param);
+				TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(), param);
 				if (synchRespStart.getSYNCHRONISATIONResult() == 99) {
 					throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
 				}
 				if (synchRespStart.getSYNCHRONISATIONResult() == 101) {
 					throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
 				}
-				String idProduction = synchRespStart.getSYNCHRONISATIONMessage();
+				idProduction = synchRespStart.getSYNCHRONISATIONMessage();
 				// Costruisco param da passare all sycro sendtu
 				// Cotruisco il param da inviare alla synchro
 
-				int intNBLigne = listPackage.size();
+				intNBLigne = listPackage.size();
 				StringBuffer sb = new StringBuffer(idMessage + "|" + idProduction + "|" + intNBLigne + ";");
-				String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "";
+
 				for (PackageSentWs packageSentWs : listPackage) {
 
 					gtinBox = packageSentWs.getGtinbox();
@@ -104,11 +101,10 @@ public class DataStreamService {
 					packageSentWsRepository.save(packageSentWs);
 				}
 				String paramSendTu = sb.toString();
+				intNbArticle = intNBLigne * new Integer(nbtu);
 				// SEND TU SYNCHRO
 				// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
-				TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn,
-						PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(),
-						paramSendTu);
+				TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
 				if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
 					throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				}
@@ -116,12 +112,9 @@ public class DataStreamService {
 					throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				}
 				// STOP SYNCHRO
-				int intNbArticle = intNBLigne * new Integer(nbtu);
-				StringBuffer sbStop = new StringBuffer(idMessage + "|" + idProduction + "|" + codeWO + "|" + codeArticle
-						+ "|" + intNBLigne + "|" + intNbArticle);
-				TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn,
-						PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(),
-						sbStop.toString());
+				
+				StringBuffer sbStop = new StringBuffer(idMessage + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
+				TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
 				if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
 					throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
 				}
@@ -131,30 +124,28 @@ public class DataStreamService {
 				// LOGOUT
 				// Login WS
 				AuthClient authClientLogout = new AuthClient();
-				TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(),
-						idConn);
+				TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(), idConn);
 				if (respLogOut.getLOGOUTResult() == 101) {
 					throw new Exception("Authentication LOGOUT error: Incorrect Call Parameter");
 				}
 				if (respLogOut.getLOGOUTResult() == 99) {
 					throw new Exception("Authentication LOGOUT error: Connection Error");
 				}
-				LogTraceWine logTraceWine = new LogTraceWine();
-				logTraceWine.setIdSend(idMessage);
+				//****OOOOKKKKK
 				logTraceWine.setEsitoInvio("OK");
-				logTraceWine.setDataInvio(new Date());
-				logTraceWine.setDescError("");
-				logTraceWineRepository.save(logTraceWine);
-
 			} catch (Exception e) {
-				LogTraceWine logTraceWine = new LogTraceWine();
-				logTraceWine.setIdSend(idMessage);
+				//****KKKKKOOOOO
 				logTraceWine.setEsitoInvio("KO");
-				logTraceWine.setDataInvio(new Date());
-				logTraceWine.setDescError(e.getMessage());
-				logTraceWineRepository.save(logTraceWine);
 			}
-
+			logTraceWine.setIdSend(idMessage);
+			logTraceWine.setDataInvio(new Date());
+			logTraceWine.setDescError("");
+			logTraceWine.setCodeWO(codeWO);
+			logTraceWine.setCodeArticle(codeArticle);
+			logTraceWine.setIdProduction(idProduction);
+			logTraceWine.setIntNbArticle(intNbArticle + "");
+			logTraceWine.setIntNBLigne(intNBLigne + "");
+			logTraceWineRepository.save(logTraceWine);
 		} else {
 			log.info("NO RECORD FOUND");
 		}
