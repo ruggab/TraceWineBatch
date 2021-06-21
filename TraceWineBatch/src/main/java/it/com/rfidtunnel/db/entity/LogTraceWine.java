@@ -31,6 +31,12 @@ public class LogTraceWine {
 	private String esitoInvio;
 
 	private String descError;
+	private String idProduction;
+	private String codeWO;
+	private String codeArticle;
+	private String intNBLigne;
+	private String intNbArticle;
+
 
 	public LogTraceWine() {
 	}
@@ -74,5 +80,47 @@ public class LogTraceWine {
 	public void setDescError(String descError) {
 		this.descError = descError;
 	}
+
+	public String getIdProduction() {
+		return idProduction;
+	}
+
+	public void setIdProduction(String idProduction) {
+		this.idProduction = idProduction;
+	}
+
+	public String getCodeWO() {
+		return codeWO;
+	}
+
+	public void setCodeWO(String codeWO) {
+		this.codeWO = codeWO;
+	}
+
+	public String getCodeArticle() {
+		return codeArticle;
+	}
+
+	public void setCodeArticle(String codeArticle) {
+		this.codeArticle = codeArticle;
+	}
+
+	public String getIntNBLigne() {
+		return intNBLigne;
+	}
+
+	public void setIntNBLigne(String intNBLigne) {
+		this.intNBLigne = intNBLigne;
+	}
+
+	public String getIntNbArticle() {
+		return intNbArticle;
+	}
+
+	public void setIntNbArticle(String intNbArticle) {
+		this.intNbArticle = intNbArticle;
+	}
+	
+	
 
 }
