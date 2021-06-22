@@ -48,7 +48,7 @@ public class DataStreamService {
 		if (packageNotSend != null) {
 			idMessage = packageNotSend.getIdSend();
 			// Cerco tutti i package per idSend da inviare
-			listPackage = packageSentWsRepository.findPackageByIdSend(packageNotSend.getIdSend());
+			listPackage = packageSentWsRepository.findPackageByIdSend(idMessage);
 		}
 
 		if (listPackage != null && listPackage.size() > 0) {
@@ -100,7 +100,7 @@ public class DataStreamService {
 					packageSentWs.setSent(true);
 					packageSentWsRepository.save(packageSentWs);
 				}
-				String paramSendTu = sb.toString();
+				String paramSendTu = sb.substring(0,sb.length()-1);
 				intNbArticle = intNBLigne * new Integer(nbtu);
 				// SEND TU SYNCHRO
 				// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
@@ -133,13 +133,14 @@ public class DataStreamService {
 				}
 				//****OOOOKKKKK
 				logTraceWine.setEsitoInvio("OK");
+				logTraceWine.setDescError("");
 			} catch (Exception e) {
 				//****KKKKKOOOOO
 				logTraceWine.setEsitoInvio("KO");
+				logTraceWine.setDescError(e.getMessage());
 			}
 			logTraceWine.setIdSend(idMessage);
 			logTraceWine.setDataInvio(new Date());
-			logTraceWine.setDescError("");
 			logTraceWine.setCodeWO(codeWO);
 			logTraceWine.setCodeArticle(codeArticle);
 			logTraceWine.setIdProduction(idProduction);
