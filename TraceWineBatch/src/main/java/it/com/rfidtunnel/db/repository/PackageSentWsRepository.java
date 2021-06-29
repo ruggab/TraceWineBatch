@@ -18,7 +18,7 @@ public interface PackageSentWsRepository extends JpaRepository<PackageSentWs, Lo
 	@Query(value = "SELECT nextval('SynchroSerial') ", nativeQuery = true)
 	Integer getSeqNextVal();
 	
-	@Query(value="select a.* from package_sent_ws a left join log_trace_wine b on a.id_send = b.id_send where b.id_send is null "
+	@Query(value="select a.* from package_sent_ws a where a.sent = false "
 			+ "union "
 			+ "select pws.* from package_sent_ws pws inner join "
 			+ "(select  a.* from log_trace_wine a inner join "
