@@ -69,7 +69,8 @@ public class DataStreamService {
 				String token = authResp.getLOGINMessage();
 				int idConn = authResp.getLOGINConnexionId();
 
-				String param = idMessage + "|START1";
+				int sequence = 1;
+				String param = sequence + "|START1";
 				SyncClient syncClient = new SyncClient();
 
 				// START SYNCHRO
@@ -87,10 +88,10 @@ public class DataStreamService {
 				// Cotruisco il param da inviare alla synchro
 
 				intNBLigne = listPackage.size();
-				StringBuffer sb = new StringBuffer(idMessage + "|" + idProduction + "|" + intNBLigne + ";");
+				sequence = sequence + 1;
+				StringBuffer sb = new StringBuffer(sequence + "|" + idProduction + "|" + intNBLigne + ";");
 
 				for (PackageSentWs packageSentWs : listPackage) {
-
 					gtinBox = packageSentWs.getGtinbox();
 					codeWO = packageSentWs.getCodewo();
 					codeArticle = packageSentWs.getCodearticle();
@@ -112,8 +113,8 @@ public class DataStreamService {
 					throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				}
 				// STOP SYNCHRO
-				
-				StringBuffer sbStop = new StringBuffer(idMessage + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
+				sequence = sequence + 1;
+				StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
 				TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
 				if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
 					throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
