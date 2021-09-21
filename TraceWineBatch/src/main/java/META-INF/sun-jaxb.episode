@@ -1,35 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <bindings xmlns="http://java.sun.com/xml/ns/jaxb" if-exists="true" version="2.1">
-      
-    <!--
+  <!--
 
 Questo file è stato generato dall'architettura JavaTM per XML Binding (JAXB) Reference Implementation, v2.3.0 
 Vedere <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
 Qualsiasi modifica a questo file andrà persa durante la ricompilazione dello schema di origine. 
-Generato il: 2021.05.26 alle 12:11:57 AM CEST 
+Generato il: 2021.09.21 alle 11:57:03 PM CEST 
 
   -->
-      
-    <bindings xmlns:tns="urn:WS_TRC_SYNCHRONISATION" if-exists="true" scd="x-schema::tns">
-            
-        <schemaBindings map="false">
-                  
-            <package name="it.com.rfidtunnel.ws.sync.gen"/>
-                
-        </schemaBindings>
-            
-        <bindings if-exists="true" scd="~tns:tSYNCHRONISATION">
-                  
-            <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION"/>
-                
-        </bindings>
-            
-        <bindings if-exists="true" scd="~tns:tSYNCHRONISATIONResponse">
-                  
-            <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse"/>
-                
-        </bindings>
-          
+  <bindings xmlns:tns="urn:WS_TRC_SYNCHRONISATION" if-exists="true" scd="x-schema::tns">
+    <schemaBindings map="false">
+      <package name="it.com.rfidtunnel.ws.sync.gen"/>
+    </schemaBindings>
+    <bindings if-exists="true" scd="~tns:tSYNCHRONISATION">
+      <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATION"/>
     </bindings>
-    
+    <bindings if-exists="true" scd="~tns:tSYNCHRONISATIONResponse">
+      <class ref="it.com.rfidtunnel.ws.sync.gen.TSYNCHRONISATIONResponse"/>
+    </bindings>
+  </bindings>
 </bindings>

@@ -19,6 +19,7 @@ public class PropertiesUtil {
 	private static String funStart;
 	private static String funStop;
 	private static String funSendtu;
+	private static String funGetInfo;
 	private static String maxnumsend;
 	
 
@@ -136,6 +137,14 @@ public class PropertiesUtil {
 
 	public  void setMaxnumsend(String maxnumsend) {
 		this.maxnumsend = maxnumsend;
+	}
+
+	public static String getFunGetInfo() {
+		return funGetInfo;
+	}
+
+	public  void setFunGetInfo(String funGetInfo) {
+		this.funGetInfo = funGetInfo;
 	}
 
 	

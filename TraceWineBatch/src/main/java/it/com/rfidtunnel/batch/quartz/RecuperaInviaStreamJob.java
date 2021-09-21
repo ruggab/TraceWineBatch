@@ -14,12 +14,13 @@ import it.com.rfidtunnel.db.services.DataStreamService;
 public class RecuperaInviaStreamJob implements Job {
 
     @Autowired
-    private DataStreamService jobService;
+    private DataStreamService dataStreamService;
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-			jobService.inviaDati();
+       	dataStreamService.getWoInfo();
+        	//dataStreamService.inviaDati();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

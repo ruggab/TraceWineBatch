@@ -39,6 +39,7 @@ public class QuartzConfig {
 	public JobDetailFactoryBean jobDetailFactoryBean() {
 		JobDetailFactoryBean jobfactory = new JobDetailFactoryBean();
 		jobfactory.setJobClass(RecuperaInviaStreamJob.class);
+		
 		return jobfactory;
 	}
 
