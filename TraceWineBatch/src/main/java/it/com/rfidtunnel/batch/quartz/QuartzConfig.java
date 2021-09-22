@@ -1,9 +1,11 @@
 package it.com.rfidtunnel.batch.quartz;
 
+import java.util.List;
 import java.util.Properties;
 
 import javax.activation.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,8 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
 import it.com.rfidtunnel.batch.util.PropertiesUtil;
+import it.com.rfidtunnel.db.entity.Settings;
+import it.com.rfidtunnel.db.repository.SettingsRepository;
 
 /**
  * The Class QuartzConfiguration.
@@ -23,6 +27,8 @@ import it.com.rfidtunnel.batch.util.PropertiesUtil;
 public class QuartzConfig {
 
 	private ApplicationContext applicationContext;
+	@Autowired
+	private SettingsRepository settingsRepository;
 
 	public QuartzConfig(ApplicationContext applicationContext) {
 		this.applicationContext = applicationContext;
@@ -38,8 +44,8 @@ public class QuartzConfig {
 	@Bean
 	public JobDetailFactoryBean jobDetailFactoryBean() {
 		JobDetailFactoryBean jobfactory = new JobDetailFactoryBean();
-		jobfactory.setJobClass(RecuperaInviaStreamJob.class);
-		
+		jobfactory.setJobClass(SendWOPackagesJob.class);
+
 		return jobfactory;
 	}
 
@@ -51,8 +57,9 @@ public class QuartzConfig {
 		// ctFactory.setStartDelay(3000);
 		// ctFactory.setName("cron_trigger");
 		// ctFactory.setGroup("cron_group");
-		// ctFactory.setCronExpression("*/10 * * * * ? *");
-		ctFactory.setCronExpression(PropertiesUtil.getCronExpression());
+		List<Settings> settingsWO = settingsRepository.findByBatchName("SENDTU");
+		// ctFactory.setCronExpression(PropertiesUtil.getCronExpression());
+		ctFactory.setCronExpression(settingsWO.get(0).getCronExpression());
 		return ctFactory;
 	}
 

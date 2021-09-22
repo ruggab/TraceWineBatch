@@ -11,7 +11,7 @@ import it.com.rfidtunnel.db.services.DataStreamService;
 
 @Component
 @DisallowConcurrentExecution
-public class SendWOPackagesJob implements Job {
+public class GetWOQuantityJob implements Job {
 
     @Autowired
     private DataStreamService dataStreamService;
@@ -19,8 +19,7 @@ public class SendWOPackagesJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
-        	//dataStreamService.getWoInfo();
-        	dataStreamService.inviaDati();
+        	dataStreamService.getWoInfo();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

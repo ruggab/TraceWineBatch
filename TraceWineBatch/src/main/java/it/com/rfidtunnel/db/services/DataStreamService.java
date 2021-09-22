@@ -60,7 +60,8 @@ public class DataStreamService {
 
 		if (listPackage != null && listPackage.size() > 0) {
 			String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "", idProduction = "";
-			int intNbArticle = 0, intNBLigne = 0;
+			int intNbArticle = 0;
+			int	intNBLigne = 0;
 			LogTraceWine logTraceWine = new LogTraceWine();
 			try {
 
@@ -238,7 +239,8 @@ public class DataStreamService {
 
 			// STOP SYNCHRO
 			sequence = sequence + 1;
-			StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
+			//"|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle
+			StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "||||");
 			TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
 			if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
 				throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
