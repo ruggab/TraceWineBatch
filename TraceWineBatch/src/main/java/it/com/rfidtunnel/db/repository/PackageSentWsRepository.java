@@ -28,13 +28,25 @@ public interface PackageSentWsRepository extends JpaRepository<PackageSentWs, Lo
 			+ "order by id_send asc limit 1 ", nativeQuery = true)
 	PackageSentWs getFirstPackageNotSend(Long numMaxInvii);
 	
-	@Query(value="select * from package_sent_ws a "
-			+ "left join "
-			+ "(select  b.id_send, count(*) numsent from log_trace_wine b group by b.id_send having count(*) > ?1) c "
-			+ "on a.id_send = c.id_send  "
-			+ "where a.sent = false "
-			+ "and c.id_send is null", nativeQuery = true)
-	List<PackageSentWs> getListPackageNotSend(Long numMaxInvii);
+	@Query(value="select a.* from package_sent_ws a where a.sent = false "
+			+ " union "
+			+ "select a.* from package_sent_ws a "
+			+ "			inner join "
+			+ "			(select  b.codewo, count(*) numsent, b.esito_invio  from log_trace_wine b group by b.codewo,b.esito_invio having count(*) < ?1) c "
+			+ "			on a.codewo = c.codewo "
+			+ "			where a.sent = true "
+			+ "			and c.esito_invio = 'KO' limit ?2", nativeQuery = true)
+	List<PackageSentWs> getListPackageNotSend(Integer numMaxInvii, Integer limit);
+	
+	@Query(value="select a.* from package_sent_ws a where a.sent = false "
+			+ " union "
+			+ "select a.* from package_sent_ws a "
+			+ "			inner join "
+			+ "			(select  b.codewo, count(*) numsent, b.esito_invio  from log_trace_wine b group by b.codewo,b.esito_invio having count(*) < ?1) c "
+			+ "			on a.codewo = c.codewo "
+			+ "			where a.sent = true "
+			+ "			and c.esito_invio = 'KO'", nativeQuery = true)
+	List<PackageSentWs> getListPackageNotSend(Integer numMaxInvii);
 	
 	@Query(value="select * from package_sent_ws where id_send = ?1", nativeQuery = true)
 	List<PackageSentWs> findPackageByIdSend(Long idSend);

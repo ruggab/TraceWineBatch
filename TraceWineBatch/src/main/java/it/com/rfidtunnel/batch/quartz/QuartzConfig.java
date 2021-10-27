@@ -3,8 +3,6 @@ package it.com.rfidtunnel.batch.quartz;
 import java.util.List;
 import java.util.Properties;
 
-import javax.activation.DataSource;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +12,6 @@ import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.scheduling.quartz.SpringBeanJobFactory;
 
-import it.com.rfidtunnel.batch.util.PropertiesUtil;
 import it.com.rfidtunnel.db.entity.Settings;
 import it.com.rfidtunnel.db.repository.SettingsRepository;
 

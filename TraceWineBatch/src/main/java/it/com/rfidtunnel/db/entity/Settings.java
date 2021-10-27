@@ -28,6 +28,8 @@ public class Settings {
 	private String cronExpression;
 	private String cronDescription;
 	private String lastSend;
+	private Integer limit;
+	private Integer numMaxSend;
 	
 
 	public Settings() {
@@ -81,6 +83,26 @@ public class Settings {
 
 	public void setCronDescription(String cronDescription) {
 		this.cronDescription = cronDescription;
+	}
+
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
+
+	public Integer getNumMaxSend() {
+		return numMaxSend;
+	}
+
+
+	public void setNumMaxSend(Integer numMaxSend) {
+		this.numMaxSend = numMaxSend;
 	}
 
 	
