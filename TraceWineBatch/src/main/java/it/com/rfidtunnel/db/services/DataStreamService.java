@@ -48,8 +48,8 @@ public class DataStreamService {
 	public void inviaDati() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
 		// trovo il primo package da inviare
-		Long numMacSent = new Long(PropertiesUtil.getMaxnumsend());
-		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend(numMacSent);
+		Long numMaxSent = new Long(PropertiesUtil.getMaxnumsend());
+		PackageSentWs packageNotSend = packageSentWsRepository.getFirstPackageNotSend(numMaxSent);
 		List<PackageSentWs> listPackage = null;
 		Long idMessage = null;
 		if (packageNotSend != null) {
@@ -272,91 +272,230 @@ public class DataStreamService {
 	public void inviaDatiTest() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
 		log.info("*********LOG  jobStreamReader start");
 		// trovo il primo package da inviare
-		Long numMacSent = new Long(PropertiesUtil.getMaxnumsend());
+		Long numMaxSent = new Long(PropertiesUtil.getMaxnumsend());
+		List<PackageSentWs> listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSent);
+		if (listPackageNotSend != null && listPackageNotSend.size() > 0) {
+			for (PackageSentWs packageSentWs : listPackageNotSend) {
 
-		String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "", idProduction = "";
-		int intNbArticle = 0;
-		int intNBLigne = 0;
-		LogTraceWine logTraceWine = new LogTraceWine();
-		try {
+				Long idMessage = packageSentWs.getIdSend();
+				// Cerco tutti i package per idSend da inviare
+				String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "", idProduction = "";
+				int intNbArticle = 0;
+				int intNBLigne = 0;
+				LogTraceWine logTraceWine = new LogTraceWine();
+				try {
 
-			// Login WSss
-			AuthClient authClient = new AuthClient();
-			TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(), PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(), PropertiesUtil.getIdCompany());
-			if (authResp.getLOGINResult() == 101) {
-				throw new Exception("Authentication login error: Incorrect Call Parameter");
-			}
-			if (authResp.getLOGINResult() == 99) {
-				throw new Exception("Authentication login error: Connection Error");
-			}
-			String token = authResp.getLOGINMessage();
-			int idConn = authResp.getLOGINConnexionId();
+					// Login WSss
+					AuthClient authClient = new AuthClient();
+					TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(), PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(), PropertiesUtil.getIdCompany());
+					if (authResp.getLOGINResult() == 101) {
+						throw new Exception("Authentication login error: Incorrect Call Parameter");
+					}
+					if (authResp.getLOGINResult() == 99) {
+						throw new Exception("Authentication login error: Connection Error");
+					}
+					String token = authResp.getLOGINMessage();
+					int idConn = authResp.getLOGINConnexionId();
 
-			int sequence = 1;
-			String param = sequence + "|START1";
-			SyncClient syncClient = new SyncClient();
+					int sequence = 1;
+					String param = sequence + "|START1";
+					SyncClient syncClient = new SyncClient();
 
-			// START SYNCHRO
-			// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309,
-			// "tunnel","Stock","startsynchro", "3|Start");
-			TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(), param);
-			if (synchRespStart.getSYNCHRONISATIONResult() == 99) {
-				throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
-			}
-			if (synchRespStart.getSYNCHRONISATIONResult() == 101) {
-				throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
-			}
-			idProduction = synchRespStart.getSYNCHRONISATIONMessage();
-			// Costruisco param da passare all sycro sendtu
-			// Cotruisco il param da inviare alla synchro
-			intNBLigne = 0;
-			sequence = sequence + 1;
-			StringBuffer sb = new StringBuffer(sequence + "|" + idProduction + "|" + intNBLigne + ";");
+					// START SYNCHRO
+					// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309,
+					// "tunnel","Stock","startsynchro", "3|Start");
+					TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(), param);
+					if (synchRespStart.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespStart.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
+					}
+					idProduction = synchRespStart.getSYNCHRONISATIONMessage();
+					// Costruisco param da passare all sycro sendtu
+					// Cotruisco il param da inviare alla synchro
+					intNBLigne = 1;
+					sequence = sequence + 1;
+					StringBuffer sb = new StringBuffer(sequence + "|" + idProduction + "|" + intNBLigne + ";");
 
-			gtinBox = "";
-			codeWO = "NOREAD";
-			codeArticle = "";
-			nbtu = "";
-			sb.append(gtinBox + "|" + codeWO + "|" + nbtu + "|");
-			sb.append("E2806890200000032B9B07CE,E280689020004001FC8584A3,E2806890200000032B9B0916;");
+					gtinBox = packageSentWs.getGtinbox();
+					codeWO = packageSentWs.getCodewo();
+					codeArticle = packageSentWs.getCodearticle();
+					nbtu = packageSentWs.getNbtu();
+					sb.append(gtinBox + "|" + codeWO + "|" + nbtu + "|");
+					sb.append(packageSentWs.getTidList() + ";");
+					
 
-			String paramSendTu = sb.toString();
-			intNbArticle = 0;
-			// SEND TU SYNCHRO
-			// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
-			TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
-			if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
-				throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
+					String paramSendTu = sb.substring(0, sb.length() - 1);
+					intNbArticle = intNBLigne * new Integer(nbtu);
+					// SEND TU SYNCHRO
+					// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
+					TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
+					if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespSendtu.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
+					}
+					// STOP SYNCHRO
+					sequence = sequence + 1;
+					StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
+					TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
+					if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespStop.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
+					}
+					// LOGOUT
+					// Login WS
+					AuthClient authClientLogout = new AuthClient();
+					TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(), idConn);
+					if (respLogOut.getLOGOUTResult() == 101) {
+						throw new Exception("Authentication LOGOUT error: Incorrect Call Parameter");
+					}
+					if (respLogOut.getLOGOUTResult() == 99) {
+						throw new Exception("Authentication LOGOUT error: Connection Error");
+					}
+					// ****OOOOKKKKK
+					logTraceWine.setEsitoInvio("OK");
+					logTraceWine.setDescError("");
+					//
+					packageSentWs.setSent(true);
+					packageSentWsRepository.save(packageSentWs);
+				} catch (Exception e) {
+					// ****KKKKKOOOOO
+					logTraceWine.setEsitoInvio("KO");
+					logTraceWine.setDescError(e.getMessage());
+				}
+				logTraceWine.setIdSend(idMessage);
+				logTraceWine.setDataInvio(new Date());
+				logTraceWine.setCodeWO(codeWO);
+				logTraceWine.setCodeArticle(codeArticle);
+				logTraceWine.setIdProduction(idProduction);
+				logTraceWine.setIntNbArticle(intNbArticle + "");
+				logTraceWine.setIntNBLigne(intNBLigne + "");
+				logTraceWineRepository.save(logTraceWine);
 			}
-			if (synchRespSendtu.getSYNCHRONISATIONResult() == 101) {
-				throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
-			}
-			// STOP SYNCHRO
-			sequence = sequence + 1;
-			StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
-			TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
-			if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
-				throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
-			}
-			if (synchRespStop.getSYNCHRONISATIONResult() == 101) {
-				throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
-			}
-			// LOGOUT
-			// Login WS
-			AuthClient authClientLogout = new AuthClient();
-			TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(), idConn);
-			if (respLogOut.getLOGOUTResult() == 101) {
-				throw new Exception("Authentication LOGOUT error: Incorrect Call Parameter");
-			}
-			if (respLogOut.getLOGOUTResult() == 99) {
-				throw new Exception("Authentication LOGOUT error: Connection Error");
-			}
-
-		} catch (Exception e) {
-			log.error("JOB Terminato " + e.getMessage());
-
+		} else {
+			log.info("NO RECORD FOUND");
 		}
+		log.info("JOB Invio DATI Terminato");
 
+	}
+
+	@Transactional
+	public void inviaDati2() throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException {
+		log.info("*********LOG  jobStreamReader start");
+		// trovo il primo package da inviare
+		Long numMaxSent = new Long(PropertiesUtil.getMaxnumsend());
+		List<PackageSentWs> listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSent);
+		if (listPackageNotSend != null && listPackageNotSend.size() > 0) {
+			for (PackageSentWs packageSentWs : listPackageNotSend) {
+
+				Long idMessage = packageSentWs.getIdSend();
+				// Cerco tutti i package per idSend da inviare
+				String gtinBox = "", codeWO = "", codeArticle = "", nbtu = "", idProduction = "";
+				int intNbArticle = 0;
+				int intNBLigne = 0;
+				LogTraceWine logTraceWine = new LogTraceWine();
+				try {
+
+					// Login WSss
+					AuthClient authClient = new AuthClient();
+					TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(), PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(), PropertiesUtil.getIdCompany());
+					if (authResp.getLOGINResult() == 101) {
+						throw new Exception("Authentication login error: Incorrect Call Parameter");
+					}
+					if (authResp.getLOGINResult() == 99) {
+						throw new Exception("Authentication login error: Connection Error");
+					}
+					String token = authResp.getLOGINMessage();
+					int idConn = authResp.getLOGINConnexionId();
+
+					int sequence = 1;
+					String param = sequence + "|START1";
+					SyncClient syncClient = new SyncClient();
+
+					// START SYNCHRO
+					// TSYNCHRONISATIONResponse resp = client.sendTu("5001F70E197",48309,
+					// "tunnel","Stock","startsynchro", "3|Start");
+					TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(), param);
+					if (synchRespStart.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespStart.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
+					}
+					idProduction = synchRespStart.getSYNCHRONISATIONMessage();
+					// Costruisco param da passare all sycro sendtu
+					// Cotruisco il param da inviare alla synchro
+					intNBLigne = 1;
+					sequence = sequence + 1;
+					StringBuffer sb = new StringBuffer(sequence + "|" + idProduction + "|" + intNBLigne + ";");
+
+					gtinBox = packageSentWs.getGtinbox();
+					codeWO = packageSentWs.getCodewo();
+					codeArticle = packageSentWs.getCodearticle();
+					nbtu = packageSentWs.getNbtu();
+					sb.append(gtinBox + "|" + codeWO + "|" + nbtu + "|");
+					sb.append(packageSentWs.getTidList() + ";");
+					
+
+					String paramSendTu = sb.substring(0, sb.length() - 1);
+					intNbArticle = intNBLigne * new Integer(nbtu);
+					// SEND TU SYNCHRO
+					// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
+					TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
+					if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespSendtu.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
+					}
+					// STOP SYNCHRO
+					sequence = sequence + 1;
+					StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWO + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
+					TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
+					if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
+						throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
+					}
+					if (synchRespStop.getSYNCHRONISATIONResult() == 101) {
+						throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
+					}
+					// LOGOUT
+					// Login WS
+					AuthClient authClientLogout = new AuthClient();
+					TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(), idConn);
+					if (respLogOut.getLOGOUTResult() == 101) {
+						throw new Exception("Authentication LOGOUT error: Incorrect Call Parameter");
+					}
+					if (respLogOut.getLOGOUTResult() == 99) {
+						throw new Exception("Authentication LOGOUT error: Connection Error");
+					}
+					// ****OOOOKKKKK
+					logTraceWine.setEsitoInvio("OK");
+					logTraceWine.setDescError("");
+					//
+					packageSentWs.setSent(true);
+					packageSentWsRepository.save(packageSentWs);
+				} catch (Exception e) {
+					// ****KKKKKOOOOO
+					logTraceWine.setEsitoInvio("KO");
+					logTraceWine.setDescError(e.getMessage());
+				}
+				logTraceWine.setIdSend(idMessage);
+				logTraceWine.setDataInvio(new Date());
+				logTraceWine.setCodeWO(codeWO);
+				logTraceWine.setCodeArticle(codeArticle);
+				logTraceWine.setIdProduction(idProduction);
+				logTraceWine.setIntNbArticle(intNbArticle + "");
+				logTraceWine.setIntNBLigne(intNBLigne + "");
+				logTraceWineRepository.save(logTraceWine);
+			}
+		} else {
+			log.info("NO RECORD FOUND");
+		}
 		log.info("JOB Invio DATI Terminato");
 
 	}

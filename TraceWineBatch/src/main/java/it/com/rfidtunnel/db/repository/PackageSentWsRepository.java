@@ -24,10 +24,21 @@ public interface PackageSentWsRepository extends JpaRepository<PackageSentWs, Lo
 			+ "(select  a.* from log_trace_wine a inner join "
 			+ "(select  b.id_send, max(b.data_invio) as maxdata, count(*) numsent from log_trace_wine b  group by id_send) c "
 			+ "on a.id_send = c.id_send and a.data_invio = c.maxdata "
-			+ "where a.esito_invio = 'KO' and numsent < ?1) allrInv on pws.id_send = allrInv.id_send "
+			+ "where a.esito_invio = 'KO' ) allrInv on pws.id_send = allrInv.id_send "
 			+ "order by id_send asc limit 1 ", nativeQuery = true)
 	PackageSentWs getFirstPackageNotSend(Long numMaxInvii);
 	
+	@Query(value="select * from package_sent_ws a "
+			+ "left join "
+			+ "(select  b.id_send, count(*) numsent from log_trace_wine b group by b.id_send having count(*) > ?1) c "
+			+ "on a.id_send = c.id_send  "
+			+ "where a.sent = false "
+			+ "and c.id_send is null", nativeQuery = true)
+	List<PackageSentWs> getListPackageNotSend(Long numMaxInvii);
+	
 	@Query(value="select * from package_sent_ws where id_send = ?1", nativeQuery = true)
 	List<PackageSentWs> findPackageByIdSend(Long idSend);
+	
+	
+	
 }

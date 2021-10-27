@@ -20,7 +20,7 @@ public class SendWOPackagesJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         try {
         	//dataStreamService.getWoInfo();
-        	dataStreamService.inviaDati();
+        	dataStreamService.inviaDati2();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
