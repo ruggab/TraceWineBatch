@@ -1,16 +1,11 @@
 package it.com.rfidtunnel.db.entity;
 
-import java.sql.Timestamp;
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  * @author Gabriele
@@ -28,7 +23,7 @@ public class Settings {
 	private String cronExpression;
 	private String cronDescription;
 	private String lastSend;
-	private Integer limit;
+	private Integer limitMax;
 	private Integer numMaxSend;
 	
 
@@ -86,15 +81,7 @@ public class Settings {
 	}
 
 
-	public Integer getLimit() {
-		return limit;
-	}
-
-
-	public void setLimit(Integer limit) {
-		this.limit = limit;
-	}
-
+	
 
 	public Integer getNumMaxSend() {
 		return numMaxSend;
@@ -103,6 +90,16 @@ public class Settings {
 
 	public void setNumMaxSend(Integer numMaxSend) {
 		this.numMaxSend = numMaxSend;
+	}
+
+
+	public Integer getLimitMax() {
+		return limitMax;
+	}
+
+
+	public void setLimitMax(Integer limitMax) {
+		this.limitMax = limitMax;
 	}
 
 	

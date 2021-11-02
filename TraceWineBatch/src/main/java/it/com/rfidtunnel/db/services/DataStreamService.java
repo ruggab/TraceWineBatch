@@ -170,10 +170,10 @@ public class DataStreamService {
 		if (settingsWO.size() > 0) {
 
 			List<PackageSentWs> listPackageNotSend = null;
-			if (settingsWO.get(0).getLimit() != null) {
-				packageSentWsRepository.getListPackageNotSend(settingsWO.get(0).getLimit(), settingsWO.get(0).getNumMaxSend());
+			if (settingsWO.get(0).getLimitMax() != null) {
+				packageSentWsRepository.getListPackageNotSend(settingsWO.get(0).getLimitMax(), settingsWO.get(0).getNumMaxSend());
 			}
-			if (settingsWO.get(0).getLimit() == null) {
+			if (settingsWO.get(0).getLimitMax() == null) {
 				packageSentWsRepository.getListPackageNotSend(settingsWO.get(0).getNumMaxSend());
 			}
 			
@@ -320,13 +320,13 @@ public class DataStreamService {
 		// trovo il primo package da inviare
 		List<Settings> settingsWO = settingsRepository.findByBatchName("SENDTU");
 		if (settingsWO.size() > 0) {
-			Integer limit = settingsWO.get(0).getLimit();
+			Integer limit = settingsWO.get(0).getLimitMax();
 			Integer numMaxSend = settingsWO.get(0).getNumMaxSend();
 			List<PackageSentWs> listPackageNotSend = null;
-			if (settingsWO.get(0).getLimit() != null) {
+			if (settingsWO.get(0).getLimitMax() != null) {
 				listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend, limit);
 			}
-			if (settingsWO.get(0).getLimit() == null) {
+			if (settingsWO.get(0).getLimitMax() == null) {
 				listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend);
 			}
 			
