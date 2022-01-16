@@ -176,7 +176,7 @@ public class DataStreamService {
 			if (settingsWO.get(0).getLimitMax() == null) {
 				packageSentWsRepository.getListPackageNotSend(settingsWO.get(0).getNumMaxSend());
 			}
-			
+
 			HashMap<String, List<PackageSentWs>> groupPackMap = new HashMap<String, List<PackageSentWs>>();
 			for (PackageSentWs packageSentWs : listPackageNotSend) {
 				if (!groupPackMap.containsKey(packageSentWs.getCodewo())) {
@@ -320,33 +320,36 @@ public class DataStreamService {
 		// trovo il primo package da inviare
 		List<Settings> settingsWO = settingsRepository.findByBatchName("SENDTU");
 		if (settingsWO.size() > 0) {
-			Integer limit = settingsWO.get(0).getLimitMax();
+			Integer limitMax = settingsWO.get(0).getLimitMax();
 			Integer numMaxSend = settingsWO.get(0).getNumMaxSend();
-			List<PackageSentWs> listPackageNotSend = null;
-			if (settingsWO.get(0).getLimitMax() != null) {
-				listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend, limit);
-			}
-			if (settingsWO.get(0).getLimitMax() == null) {
-				listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend);
-			}
-			
-			HashMap<String, List<PackageSentWs>> groupPackMap = new HashMap<String, List<PackageSentWs>>();
-			for (PackageSentWs packageSentWs : listPackageNotSend) {
-				if (!groupPackMap.containsKey(packageSentWs.getCodewo())) {
-					List<PackageSentWs> listPackage = new ArrayList<PackageSentWs>();
-					listPackage.add(packageSentWs);
-					groupPackMap.put(packageSentWs.getCodewo(), listPackage);
-				} else {
-					List<PackageSentWs> listPackage = groupPackMap.get(packageSentWs.getCodewo());
-					listPackage.add(packageSentWs);
+			if (numMaxSend != null) {
+				List<PackageSentWs> listPackageNotSend = null;
+				if (limitMax != null) {
+					listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend, limitMax);
 				}
+				if (limitMax == null) {
+					listPackageNotSend = packageSentWsRepository.getListPackageNotSend(numMaxSend);
+				}
+				HashMap<String, List<PackageSentWs>> groupPackMap = new HashMap<String, List<PackageSentWs>>();
+				for (PackageSentWs packageSentWs : listPackageNotSend) {
+					if (!groupPackMap.containsKey(packageSentWs.getCodewo())) {
+						List<PackageSentWs> listPackage = new ArrayList<PackageSentWs>();
+						listPackage.add(packageSentWs);
+						groupPackMap.put(packageSentWs.getCodewo(), listPackage);
+					} else {
+						List<PackageSentWs> listPackage = groupPackMap.get(packageSentWs.getCodewo());
+						listPackage.add(packageSentWs);
+					}
+				}
+				for (String codeWo : groupPackMap.keySet()) {
+					List<PackageSentWs> listPackage = groupPackMap.get(codeWo);
+					LogTraceWine logTraceWine = sendToWS(codeWo, listPackage);
+					logTraceWineRepository.save(logTraceWine);
+				}
+				log.info("*********JOB  STOP");
+			} else {
+				log.info("*********Parametro numMaxSend non settato");
 			}
-			for (String codeWo : groupPackMap.keySet()) {
-				List<PackageSentWs> listPackage = groupPackMap.get(codeWo);
-				LogTraceWine logTraceWine = sendToWS(codeWo, listPackage);
-				logTraceWineRepository.save(logTraceWine);
-			}
-			log.info("*********JOB  STOP");
 		} else {
 			log.info("*********Parametri in tabella Setting non presenti");
 		}
@@ -368,9 +371,11 @@ public class DataStreamService {
 			AuthClient authClient = new AuthClient();
 			TLOGINResponse authResp = authClient.getLoginResp(PropertiesUtil.getUser(), PropertiesUtil.getPassword(), PropertiesUtil.getApplication(), PropertiesUtil.getHost(), PropertiesUtil.getIdCompany());
 			if (authResp.getLOGINResult() == 101) {
+				log.error("101(Incorrect Call Parameter): Login error with parameter user:" + PropertiesUtil.getUser() + " psw:" + PropertiesUtil.getPassword() + " app:" + PropertiesUtil.getApplication() + "host:" + PropertiesUtil.getHost() + "company:" + PropertiesUtil.getIdCompany());
 				throw new Exception("Authentication login error: Incorrect Call Parameter");
 			}
 			if (authResp.getLOGINResult() == 99) {
+				log.error("99(Connection Error): Login error with parameter user:" + PropertiesUtil.getUser() + " psw:" + PropertiesUtil.getPassword() + " app:" + PropertiesUtil.getApplication() + "host:" + PropertiesUtil.getHost() + "company:" + PropertiesUtil.getIdCompany());
 				throw new Exception("Authentication login error: Connection Error");
 			}
 			String token = authResp.getLOGINMessage();
@@ -385,9 +390,11 @@ public class DataStreamService {
 			// "tunnel","Stock","startsynchro", "3|Start");
 			TSYNCHRONISATIONResponse synchRespStart = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStart(), param);
 			if (synchRespStart.getSYNCHRONISATIONResult() == 99) {
+				log.error("99 SYNCHRONISATION START error:" + synchRespStart.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
 			}
 			if (synchRespStart.getSYNCHRONISATIONResult() == 101) {
+				log.error("101 SYNCHRONISATION START error:" + synchRespStart.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION START error: " + synchRespStart.getSYNCHRONISATIONMessage());
 			}
 			idProduction = synchRespStart.getSYNCHRONISATIONMessage();
@@ -413,9 +420,11 @@ public class DataStreamService {
 			// paramSendTu = "29|10835|1;8885|L123|6|1000,1001,1002,1003,1004,1005";
 			TSYNCHRONISATIONResponse synchRespSendtu = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunSendtu(), paramSendTu);
 			if (synchRespSendtu.getSYNCHRONISATIONResult() == 99) {
+				log.error("99 SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 			}
 			if (synchRespSendtu.getSYNCHRONISATIONResult() == 101) {
+				log.error("101 SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION SENDTU error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 			}
 			// STOP SYNCHRO
@@ -423,9 +432,11 @@ public class DataStreamService {
 			StringBuffer sbStop = new StringBuffer(sequence + "|" + idProduction + "|" + codeWo + "|" + codeArticle + "|" + intNBLigne + "|" + intNbArticle);
 			TSYNCHRONISATIONResponse synchRespStop = syncClient.synchronization(token, idConn, PropertiesUtil.getSubject(), PropertiesUtil.getApplication(), PropertiesUtil.getFunStop(), sbStop.toString());
 			if (synchRespStop.getSYNCHRONISATIONResult() == 99) {
+				log.error("99 SYNCHRONISATION STOP error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
 			}
 			if (synchRespStop.getSYNCHRONISATIONResult() == 101) {
+				log.error("101 SYNCHRONISATION STOP error: " + synchRespSendtu.getSYNCHRONISATIONMessage());
 				throw new Exception("SYNCHRONISATION STOP error: " + synchRespStop.getSYNCHRONISATIONMessage());
 			}
 			// LOGOUT
@@ -433,9 +444,11 @@ public class DataStreamService {
 			AuthClient authClientLogout = new AuthClient();
 			TLOGOUTResponse respLogOut = authClientLogout.getLogOutResp(token, PropertiesUtil.getApplication(), idConn);
 			if (respLogOut.getLOGOUTResult() == 101) {
+				log.error("101 Authentication LOGOUT error: Incorrect Call Parameter");
 				throw new Exception("Authentication LOGOUT error: Incorrect Call Parameter");
 			}
 			if (respLogOut.getLOGOUTResult() == 99) {
+				log.error("99 Authentication LOGOUT error: Connection Error");
 				throw new Exception("Authentication LOGOUT error: Connection Error");
 			}
 
